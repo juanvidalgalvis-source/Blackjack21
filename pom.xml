@@ -57,7 +57,7 @@
                 <version>3.2.5</version>
                 <configuration>
                     <includes>
-                        <include>**/BJTest1VBase.java</include>
+                        <include>**/BJTest*V*.java</include>
                     </includes>
                 </configuration>
             </plugin>

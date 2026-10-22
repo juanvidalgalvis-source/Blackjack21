@@ -15,6 +15,10 @@
     <Label text="Blackjack 21" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
     <Label text="Jugador" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
     <Label fx:id="manoLabel" wrapText="true"/>
+    <Label fx:id="puntajeLabel"/>
+    <Label fx:id="estadoLabel" wrapText="true"/>
     <Label fx:id="cartasRestantesLabel"/>
     <Button fx:id="pedirCartaButton" text="Pedir carta" onAction="#onPedirCarta"/>
+    <Button fx:id="plantarseButton" text="Plantarse" onAction="#onPlantarse"/>
+    <Button fx:id="iniciarRondaButton" text="Iniciar ronda" onAction="#onIniciarRonda"/>
 </VBox>

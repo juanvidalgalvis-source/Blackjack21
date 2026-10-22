@@ -16,10 +16,22 @@ public class BlackjackController {
     private Label manoLabel;
 
     @FXML
+    private Label puntajeLabel;
+
+    @FXML
+    private Label estadoLabel;
+
+    @FXML
     private Label cartasRestantesLabel;
 
     @FXML
     private Button pedirCartaButton;
+
+    @FXML
+    private Button plantarseButton;
+
+    @FXML
+    private Button iniciarRondaButton;
 
     @FXML
     private void initialize() {
@@ -37,9 +49,20 @@ public class BlackjackController {
         actualizarVista();
 
         if (juego.mazoEstaVacio()) {
-            pedirCartaButton.setDisable(true);
             avisarMazoAgotado();
         }
+    }
+
+    @FXML
+    private void onPlantarse() {
+        juego.plantarse();
+        actualizarVista();
+    }
+
+    @FXML
+    private void onIniciarRonda() {
+        juego.iniciarNuevaRonda();
+        actualizarVista();
     }
 
     private void actualizarVista() {
@@ -47,8 +70,14 @@ public class BlackjackController {
                 .map(Carta::toString)
                 .collect(Collectors.joining(", "));
         manoLabel.setText("Tu mano: " + cartas);
+        puntajeLabel.setText("Puntaje: " + juego.getPuntaje());
+        estadoLabel.setText(juego.getMensajeEstado());
         cartasRestantesLabel.setText("Cartas restantes en el mazo: "
                 + juego.getCartasRestantes());
+        boolean turnoActivo = juego.isTurnoJugadorActivo();
+        pedirCartaButton.setDisable(!turnoActivo || juego.mazoEstaVacio());
+        plantarseButton.setDisable(!turnoActivo);
+        iniciarRondaButton.setDisable(turnoActivo);
     }
 
     private void avisarMazoAgotado() {

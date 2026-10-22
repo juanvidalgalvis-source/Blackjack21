@@ -51,7 +51,7 @@ Si el jugador llega a 21, su turno termina solo y empieza el del computador. Si 
 |---|---|---|
 | Blackjack | As + carta de valor 10 (10, J, Q o K) **solo en las dos cartas iniciales** | Supera a cualquier mano que no sea Blackjack |
 | Veintiuno | Puntaje 21 sin cumplir la condición de Blackjack | Se compara con la mano del rival |
-| Veinte y medio | Puntaje de la mano igual a **14** | Mensaje especial; el jugador puede pedir o plantarse. No paga extra ni gana solo |
+| Veinte y medio | Puntaje de la mano igual a **14** | Mensaje especial; el jugador puede pedir o plantarse. Al comparar, vence a manos válidas de hasta 20; pierde contra cualquier 21. No paga extra |
 | Pasarse | Puntaje mayor a 21 tras ajustar ases | El participante pierde |
 | Empate | Ambos con Blackjack, o el mismo puntaje válido sin prioridad de Blackjack | Se devuelve la apuesta |
 
@@ -62,17 +62,18 @@ Ejemplos de decisión del ganador:
 | Blackjack | Sin Blackjack | Gana el jugador |
 | Blackjack | Blackjack | Empate |
 | 21 normal | 20 | Gana el jugador |
-| 14 (veinte y medio) | 13 | Gana el jugador |
-| 14 (veinte y medio) | 18 | Pierde el jugador |
+| 14 (veinte y medio) | 20 | Gana el jugador |
+| 14 (veinte y medio) | 21 normal o Blackjack | Pierde el jugador |
+| 14 (veinte y medio) | 14 (veinte y medio) | Empate |
 | 18 | 17 | Gana el jugador |
 | 17 | 19 | Pierde el jugador |
 | 22 o más | Cualquiera | Pierde el jugador |
 
-Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
+Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válida de hasta 20 puntos, pero pierde contra cualquier 21, sea normal o Blackjack. Si ambos tienen Veinte y medio, hay empate.
 
 ## 4. Aclaraciones acordadas (respuestas a las dudas)
 
-1. **Veinte y medio = mano que suma 14.** Solo se identifica con un mensaje; se sigue jugando normal y se compara por puntaje como cualquier mano.
+1. **Veinte y medio = mano que suma 14.** Se informa con un mensaje y el jugador puede seguir jugando o plantarse. No gana automáticamente ni recibe pago adicional: al resolver la ronda, vence a una mano válida de hasta 20, pierde contra cualquier 21 y empata contra otro Veinte y medio.
 2. **El 14 se evalúa sobre el puntaje ya ajustado.** Ejemplo: As + 3 vale 14 (As como 11, "mano blanda") y activa el mensaje. Si al pedir otra carta el As baja a 1 y el puntaje deja de ser 14, el mensaje desaparece.
 3. **"Un diez" incluye 10, J, Q y K.** Un Blackjack es As + cualquiera de ellas en las dos cartas iniciales. Un As + 10 formado después de pedir más cartas (ejemplo: As + 5 + 5) es un 21 normal.
 4. **El sistema distingue Blackjack de 21 normal** viendo cómo se llegó al 21, no solo el puntaje. Con Blackjack vs 21 de tres cartas, gana el Blackjack.
@@ -105,6 +106,7 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 **Reglas de la planificación:**
 - Mínimo 3 y máximo 7 versiones; máximo 7 HU por versión.
 - Cada versión es **autocompleta**: la aplicación corre y se puede probar al terminar cada una.
+- En cada versión se preparan y ejecutan pruebas de lo que se acaba de implementar y de sus casos límite. La HU-20 consolida los casos y resultados al final; las pruebas no se dejan para la última versión.
 - Las HU siguen el formato **Como – Quiero – Para**. Los criterios de aceptación son las tareas.
 - **Tarea corta:** la que se escribe en 3 líneas o menos. Las tareas cortas relacionadas se agrupan en una **super tarea**.
 - Cada tarea (o super tarea) se evalúa con dos etiquetas:
@@ -121,7 +123,7 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 | 3 | Rival | Turno del computador y resultado de la ronda | HU-09 a HU-11 |
 | 4 | Economía | Apuestas, saldo, pagos y fin del juego | HU-12 a HU-14 |
 | 5 | Completa | Imágenes, reglas, cierre con confirmación, estados de botones y mensajes | HU-15 a HU-19 |
-| 6 | Entrega | Casos de prueba y diagrama UML | HU-20 a HU-21 |
+| 6 | Entrega | Consolidación de las pruebas de cada versión y diagrama UML | HU-20 a HU-21 |
 
 ---
 
@@ -243,7 +245,7 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 - **Tarea B: Sin rondas superpuestas** (Alta | PDF)
   - No es posible iniciar otra ronda antes de que termine la actual.
 - **Tarea C: Primera mano** (Media | Propuesta)
-  - La primera mano se sigue repartiendo al abrir la aplicación, como en la versión 1.
+  - En esta etapa, la primera mano se sigue repartiendo al abrir la aplicación, como en la versión 1. Este comportamiento transitorio se reemplaza en HU-12: en la versión de Economía la ronda comienza solo después de ingresar una apuesta válida.
 
 ---
 
@@ -289,7 +291,8 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
   - El Blackjack supera a cualquier mano que no sea Blackjack, incluso a un 21 de varias cartas.
   - Blackjack contra Blackjack es empate.
   - Sin Blackjack, gana el puntaje válido más alto; el mismo puntaje es empate.
-  - El que supera 21 pierde; el Veinte y medio no gana automáticamente.
+  - El Veinte y medio vence a cualquier mano válida de hasta 20 puntos, pierde contra cualquier 21 (incluido el Blackjack) y empata contra otro Veinte y medio.
+  - El participante que supera 21 pierde; Veinte y medio no da una victoria automática ni un pago adicional.
 - **Tarea B: Mensaje de resultado** (Alta | PDF)
   - Al terminar la ronda se informa victoria, derrota o empate, y la razón (ejemplo: «el computador se pasó»).
 - **Tarea C: Resultado único** (Alta | PDF)
@@ -312,12 +315,15 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
   - Existe un campo para ingresar la apuesta.
   - La apuesta debe ser un número entero, múltiplo de 10, de mínimo 10 fichas.
   - La apuesta no puede superar el saldo disponible.
-- **Tarea C: Mensajes de error** (Alta | PDF)
+- **Tarea C: Estado previo a la primera ronda** (Alta | PDF)
+  - Antes de iniciar la primera ronda no hay una apuesta vigente ni cartas repartidas.
+  - Se informa que se debe ingresar una apuesta para comenzar; escribir o corregirla no descuenta fichas.
+- **Tarea D: Mensajes de error** (Alta | PDF)
   - Una apuesta inválida o un saldo insuficiente se rechazan con un mensaje claro, sin repartir cartas y sin modificar el saldo.
-- **Super tarea D: Descuento y bloqueo** (Alta | PDF)
+- **Super tarea E: Descuento y bloqueo** (Alta | PDF)
   - Al validar la apuesta se descuenta del saldo y comienza la ronda.
   - Después del reparto el campo de apuesta queda bloqueado hasta terminar la ronda.
-- **Tarea E: Nuevo inicio de ronda** (Alta | PDF)
+- **Tarea F: Nuevo inicio de ronda** (Alta | PDF)
   - El reparto inicial pasa a ocurrir al iniciar la ronda con una apuesta válida, y deja de ocurrir al abrir la aplicación.
 
 ## HU-13. Cobrar o perder según el resultado
@@ -371,7 +377,7 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Botón «Ver reglas»** (Alta | PDF)
   - Existe el botón «Ver reglas», que muestra una ventana con las reglas resumidas del juego.
-  - Las reglas incluyen valores, pagos, jugadas especiales y reglas del computador.
+  - Las reglas explican el objetivo, los valores de las cartas, el ajuste de ases, las apuestas y sus pagos, las jugadas especiales (incluida la prioridad de Blackjack y Veinte y medio = 14) y las reglas del computador.
 - **Tarea B: Conservar la partida** (Alta | PDF)
   - Al cerrar las reglas, manos, saldo, apuesta y estado de la ronda siguen intactos.
 
@@ -392,7 +398,8 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Estados del juego** (Alta | PDF)
-  - Sin ronda en curso: solo «Iniciar ronda», el campo de apuesta, «Ver reglas» y «Cerrar juego».
+  - Antes de la primera ronda, las manos del jugador y del computador están vacías, no hay apuesta vigente y un mensaje indica que se debe ingresar una apuesta.
+  - Sin ronda en curso: están disponibles «Iniciar ronda», el campo de apuesta, «Ver reglas» y «Cerrar juego»; «Pedir carta» y «Plantarse» permanecen deshabilitados.
   - Turno del jugador: solo «Pedir carta», «Plantarse», «Ver reglas» y «Cerrar juego».
   - Turno del computador y fin de ronda: no se puede pedir carta ni plantarse.
   - Fin del juego por saldo: solo «Ver reglas» y «Cerrar juego».
@@ -408,7 +415,7 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Información siempre visible** (Alta | PDF)
-  - Zonas identificadas para jugador y computador.
+  - Zonas identificadas para jugador y computador, con espacio para mostrar las imágenes de sus cartas; antes de repartir, ambas zonas están vacías.
   - Puntajes de ambos, saldo y apuesta vigente a la vista.
 - **Super tarea B: Mensajes de estado** (Alta | PDF)
   - Se indica el turno actual (apostar, turno del jugador, turno del computador).
@@ -423,25 +430,37 @@ Veinte y medio no gana automáticamente: un veintiuno o un Blackjack lo superan.
 **Objetivo:** reunir las evidencias de funcionamiento pedidas por el PDF.
 
 ## HU-20. Demostrar que el juego funciona
-**Como** equipo, **quiero** casos de prueba documentados, **para** demostrar que el juego cumple las reglas. Aunque esta version que pide las pruebas sea la ultima, la idea es que durante todo el transcurso del desarrollo del proyecto, como minimo, haya un test nuevo en cada version que ponga a prueba precisamente nuevo implementado en cada version. Que por nombre los test tengan un formato similar.
+**Como** equipo, **quiero** crear y ejecutar pruebas a medida que se completa cada versión y reunir sus resultados, **para** detectar problemas durante el desarrollo y demostrar que el juego cumple las reglas.
 
 **Criterios de aceptación / tareas:**
-- **Super tarea A: Pruebas de apuestas y saldo** (Alta | PDF)
-  - Apuestas incorrectas (no entera, no múltiplo de 10, menor a 10, vacía) y saldo insuficiente.
-  - Actualización correcta del saldo en derrota, empate, victoria ordinaria y victoria con Blackjack.
-  - Fin del juego con saldo menor a 10, y con exactamente 10 aún se puede apostar.
-- **Super tarea B: Pruebas de manos** (Alta | PDF)
-  - Cálculo con uno y con varios ases.
-  - Reconocimiento de Blackjack, Veintiuno y Veinte y medio.
-  - Diferencia entre Blackjack y 21 de más de dos cartas.
-  - Derrota por superar 21 y empate.
-- **Super tarea C: Pruebas del computador** (Alta | PDF)
-  - Pide con puntaje menor a 17 y se planta de 17 a 21, incluido el 17 blando.
-  - Pierde si supera 21 y reconoce su Blackjack inicial.
-- **Super tarea D: Pruebas de integridad** (Alta | PDF)
-  - Ausencia de cartas repetidas en una ronda.
-  - Ausencia de acciones fuera de turno.
-- Cada caso registra: entrada, resultado esperado y resultado obtenido.
+- **Super tarea A: Pruebas de la versión 1 — Base** (Alta | PDF)
+  - Al crear el juego, el jugador recibe dos cartas y quedan 50 disponibles.
+  - Verificar que el mazo usa un arreglo de 52 posiciones y la mano una `LinkedList`.
+  - Pedir carta agrega exactamente una carta al final de la mano y reduce en uno las cartas disponibles.
+  - Al recorrer el mazo completo no hay cartas repetidas y una extracción adicional se rechaza. Con las reglas de la versión Jugable, la mano no puede agotar el mazo después de que el turno termine automáticamente.
+  - Verificar la representación textual de las cartas por valor y palo.
+  - Comprobar desde la ventana que se muestran la mano y las cartas restantes, que el botón reparte una carta por clic y que al agotarse el mazo se informa y se deshabilita el botón. Registrar estos casos como pruebas de aceptación manuales mientras no haya pruebas automatizadas de la interfaz.
+- **Super tarea B: Pruebas de la versión 2 — Jugable** (Alta | PDF)
+  - Verificar valores de cartas, cálculo con As + 9 y luego 5, y manos con varios ases: As + As + 9, As + As + K y As + As + K + K.
+  - Distinguir Blackjack inicial (As + 10) de un 21 formado con tres o más cartas; probar también Veintiuno y Veinte y medio con 14, incluido el cambio de mensaje cuando el puntaje cambia al pedir.
+  - Comprobar que al llegar a 21 termina el turno, al superar 21 se pierde y se bloquean las acciones, y que una nueva ronda renueva el mazo y la mano.
+- **Super tarea C: Pruebas de la versión 3 — Rival** (Alta | PDF)
+  - Comprobar que el computador no recibe cartas antes de su turno, recibe dos al iniciarlo, pide con 16 y se planta con 17 y con As + 6.
+  - Comprobar que el computador reconoce Blackjack inicial, que Blackjack vence a un 21 del jugador formado con más de dos cartas y que dos Blackjack empatan sin repetir cartas físicas.
+  - Probar que el jugador que se pasa pierde sin turno del computador, que el computador pierde al pasarse y que las manos de 14 empatan entre sí, vencen a manos válidas de hasta 20 y pierden contra cualquier 21.
+- **Super tarea D: Pruebas de la versión 4 — Economía** (Alta | PDF)
+  - Rechazar campo vacío, texto, decimales, negativos, cero, valores menores de 10, no múltiplos de 10 y apuestas superiores al saldo, sin repartir ni modificar el saldo.
+  - Comprobar que con saldo 1.000 se acepta apostar 1.000 y que el descuento ocurre al iniciar, no al escribir; validar los saldos finales 900, 1.000, 1.100 y 1.150 con apuesta de 100.
+  - Comprobar que cada resultado liquida una sola vez, que con menos de 10 fichas no se inicia otra ronda y que con exactamente 10 sí se puede.
+- **Super tarea E: Pruebas de la versión 5 — Completa** (Alta | PDF)
+  - Verificar correspondencia entre cartas e imágenes y, si se implementa el manejo opcional de imágenes faltantes, comprobar que se informa sin cerrar la aplicación.
+  - Abrir y cerrar las reglas antes de una ronda y durante una ronda; confirmar que no cambian manos, mazo, turno, apuesta, saldo ni resultado.
+  - Probar el cierre con el botón y con la X antes de una ronda, durante el turno del jugador y después del resultado; al cancelar, conservar la partida, y al confirmar, cerrar.
+  - Verificar las acciones habilitadas antes de la primera ronda, durante cada turno, al terminar la ronda y al acabarse las fichas; comprobar que no se aceptan acciones fuera de turno.
+- **Tarea F: Ejecución y registro progresivos** (Alta | PDF)
+  - Preparar y ejecutar las pruebas correspondientes al completar cada versión; al avanzar, conservar y volver a ejecutar las pruebas anteriores que sigan aplicando.
+  - Mantener un formato de nombres consistente (por ejemplo, `V01_HU01_MazoSinRepeticiones`) y registrar para cada caso la versión, la entrada o acción, el resultado esperado y el resultado obtenido.
+  - Reunir en esta HU el registro final de las pruebas realizadas durante las versiones 1 a 5.
 
 ## HU-21. Documentar el diseño de clases
 **Como** equipo, **quiero** un diagrama de clases UML, **para** mostrar cómo está organizada la solución en MVC.
