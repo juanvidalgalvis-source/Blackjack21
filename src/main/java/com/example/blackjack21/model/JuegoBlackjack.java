@@ -12,10 +12,28 @@ public class JuegoBlackjack {
         PASARSE
     }
 
+    public enum EstadoRonda {
+        TURNO_JUGADOR,
+        TURNO_COMPUTADOR,
+        TERMINADA
+    }
+
+    public enum ResultadoRonda {
+        EN_CURSO,
+        VICTORIA,
+        DERROTA,
+        EMPATE
+    }
+
     private Mazo mazo;
     private final LinkedList<Carta> mano = new LinkedList<>();
+    private final LinkedList<Carta> manoComputador = new LinkedList<>();
     private boolean turnoJugadorActivo;
     private SituacionMano situacionMano;
+    private SituacionMano situacionComputador;
+    private EstadoRonda estadoRonda;
+    private ResultadoRonda resultadoRonda;
+    private String mensajeResultado;
 
     public JuegoBlackjack() {
         this(new Mazo());
@@ -30,33 +48,48 @@ public class JuegoBlackjack {
         mano.add(mazo.sacarCarta());
         mano.add(mazo.sacarCarta());
         turnoJugadorActivo = true;
+        estadoRonda = EstadoRonda.TURNO_JUGADOR;
+        resultadoRonda = ResultadoRonda.EN_CURSO;
+        situacionComputador = SituacionMano.EN_JUEGO;
+        mensajeResultado = "";
         actualizarSituacion(true);
+        if (situacionMano == SituacionMano.BLACKJACK
+                || situacionMano == SituacionMano.VEINTIUNO) {
+            jugarTurnoComputador();
+        }
     }
 
     public Carta pedirCarta() {
-        if (!turnoJugadorActivo) {
+        if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
             throw new IllegalStateException("El turno del jugador ya terminó.");
         }
         Carta carta = mazo.sacarCarta();
         mano.add(carta);
         actualizarSituacion(false);
+        if (situacionMano == SituacionMano.PASARSE) {
+            finalizarRonda(ResultadoRonda.DERROTA,
+                    "Perdiste: te pasaste de 21; el computador no jugó.");
+        } else if (situacionMano == SituacionMano.VEINTIUNO) {
+            jugarTurnoComputador();
+        }
         return carta;
     }
 
     public void plantarse() {
-        if (!turnoJugadorActivo) {
+        if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
             throw new IllegalStateException("El turno del jugador ya terminó.");
         }
         turnoJugadorActivo = false;
-        situacionMano = SituacionMano.EN_JUEGO;
+        jugarTurnoComputador();
     }
 
     public void iniciarNuevaRonda() {
-        if (turnoJugadorActivo) {
-            throw new IllegalStateException("No se puede iniciar otra ronda durante el turno actual.");
+        if (estadoRonda != EstadoRonda.TERMINADA) {
+            throw new IllegalStateException("No se puede iniciar otra ronda antes de terminar la actual.");
         }
         mazo = new Mazo();
         mano.clear();
+        manoComputador.clear();
         repartirManoInicial();
     }
 
@@ -64,6 +97,96 @@ public class JuegoBlackjack {
         situacionMano = evaluarMano(mano, manoInicial);
         turnoJugadorActivo = situacionMano == SituacionMano.EN_JUEGO
                 || situacionMano == SituacionMano.VEINTE_Y_MEDIO;
+    }
+
+    private void jugarTurnoComputador() {
+        if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
+            return;
+        }
+        estadoRonda = EstadoRonda.TURNO_COMPUTADOR;
+        turnoJugadorActivo = false;
+
+        manoComputador.add(mazo.sacarCarta());
+        manoComputador.add(mazo.sacarCarta());
+        situacionComputador = evaluarMano(manoComputador, true);
+
+        if (situacionMano == SituacionMano.BLACKJACK) {
+            if (situacionComputador == SituacionMano.BLACKJACK) {
+                finalizarRonda(ResultadoRonda.EMPATE,
+                        "Empate: ambos tienen Blackjack.");
+            } else {
+                finalizarRonda(ResultadoRonda.VICTORIA,
+                        "Ganaste: tienes Blackjack y el computador no.");
+            }
+            return;
+        }
+        if (situacionComputador == SituacionMano.BLACKJACK) {
+            finalizarRonda(ResultadoRonda.DERROTA,
+                    "Perdiste: el computador tiene Blackjack.");
+            return;
+        }
+
+        while (calcularPuntaje(manoComputador) < 17) {
+            manoComputador.add(mazo.sacarCarta());
+            situacionComputador = evaluarMano(manoComputador, false);
+        }
+        determinarResultado();
+    }
+
+    private void determinarResultado() {
+        int puntajeJugador = calcularPuntaje(mano);
+        int puntajeComputador = calcularPuntaje(manoComputador);
+
+        if (situacionComputador == SituacionMano.PASARSE) {
+            finalizarRonda(ResultadoRonda.VICTORIA,
+                    "Ganaste: el computador se pasó de 21.");
+            return;
+        }
+
+        if (situacionMano == SituacionMano.VEINTE_Y_MEDIO) {
+            if (situacionComputador == SituacionMano.VEINTE_Y_MEDIO) {
+                finalizarRonda(ResultadoRonda.EMPATE,
+                        "Empate: ambos tienen Veinte y medio.");
+            } else if (puntajeComputador == 21) {
+                finalizarRonda(ResultadoRonda.DERROTA,
+                        "Perdiste: el computador obtuvo 21.");
+            } else {
+                finalizarRonda(ResultadoRonda.VICTORIA,
+                        "Ganaste: Veinte y medio vence a la mano del computador.");
+            }
+            return;
+        }
+        if (situacionComputador == SituacionMano.VEINTE_Y_MEDIO) {
+            if (puntajeJugador == 21) {
+                finalizarRonda(ResultadoRonda.VICTORIA,
+                        "Ganaste: tu 21 vence al Veinte y medio del computador.");
+            } else {
+                finalizarRonda(ResultadoRonda.DERROTA,
+                        "Perdiste: Veinte y medio vence a tu mano.");
+            }
+            return;
+        }
+
+        if (puntajeJugador > puntajeComputador) {
+            finalizarRonda(ResultadoRonda.VICTORIA,
+                    "Ganaste: tu puntaje es mayor que el del computador.");
+        } else if (puntajeJugador < puntajeComputador) {
+            finalizarRonda(ResultadoRonda.DERROTA,
+                    "Perdiste: el puntaje del computador es mayor.");
+        } else {
+            finalizarRonda(ResultadoRonda.EMPATE,
+                    "Empate: ambos tienen el mismo puntaje.");
+        }
+    }
+
+    private void finalizarRonda(ResultadoRonda resultado, String mensaje) {
+        if (estadoRonda == EstadoRonda.TERMINADA) {
+            return;
+        }
+        resultadoRonda = resultado;
+        mensajeResultado = mensaje;
+        estadoRonda = EstadoRonda.TERMINADA;
+        turnoJugadorActivo = false;
     }
 
     public static int calcularPuntaje(List<Carta> mano) {
@@ -93,10 +216,20 @@ public class JuegoBlackjack {
         if (puntaje == 21) {
             return SituacionMano.VEINTIUNO;
         }
-        if (puntaje == 14) {
+        if (manoInicial && esVeinteYMedio(mano)) {
             return SituacionMano.VEINTE_Y_MEDIO;
         }
         return SituacionMano.EN_JUEGO;
+    }
+
+    private static boolean esVeinteYMedio(List<Carta> mano) {
+        if (mano.size() != 2) {
+            return false;
+        }
+        boolean tieneCuatro = mano.stream().anyMatch(carta -> "4".equals(carta.valor()));
+        boolean tieneFigura = mano.stream().anyMatch(carta ->
+                "J".equals(carta.valor()) || "Q".equals(carta.valor()) || "K".equals(carta.valor()));
+        return tieneCuatro && tieneFigura;
     }
 
     private static boolean esBlackjack(List<Carta> mano) {
@@ -108,12 +241,36 @@ public class JuegoBlackjack {
         return List.copyOf(mano);
     }
 
+    public List<Carta> getManoComputador() {
+        return List.copyOf(manoComputador);
+    }
+
     public int getPuntaje() {
         return calcularPuntaje(mano);
     }
 
+    public int getPuntajeComputador() {
+        return calcularPuntaje(manoComputador);
+    }
+
     public SituacionMano getSituacionMano() {
         return situacionMano;
+    }
+
+    public SituacionMano getSituacionComputador() {
+        return situacionComputador;
+    }
+
+    public EstadoRonda getEstadoRonda() {
+        return estadoRonda;
+    }
+
+    public ResultadoRonda getResultadoRonda() {
+        return resultadoRonda;
+    }
+
+    public String getMensajeResultado() {
+        return mensajeResultado;
     }
 
     public boolean isTurnoJugadorActivo() {
@@ -121,14 +278,20 @@ public class JuegoBlackjack {
     }
 
     public String getMensajeEstado() {
+        if (estadoRonda == EstadoRonda.TERMINADA) {
+            return mensajeResultado;
+        }
+        if (estadoRonda == EstadoRonda.TURNO_COMPUTADOR) {
+            return "Turno del computador.";
+        }
         return switch (situacionMano) {
             case BLACKJACK -> "Blackjack. Tu turno ha terminado.";
             case VEINTIUNO -> "Veintiuno. Tu turno ha terminado.";
             case VEINTE_Y_MEDIO -> "Veinte y medio. Puedes pedir carta o plantarte.";
-            case PASARSE -> "Pasarse: superaste 21. Pierdes la ronda.";
+            case PASARSE -> "Pasarse: superaste 21.";
             case EN_JUEGO -> turnoJugadorActivo
                     ? "Tu turno: puedes pedir carta o plantarte."
-                    : "Te plantaste. La ronda ha terminado.";
+                    : "Tu turno ha terminado.";
         };
     }
 

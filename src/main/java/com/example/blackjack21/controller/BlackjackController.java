@@ -16,7 +16,13 @@ public class BlackjackController {
     private Label manoLabel;
 
     @FXML
+    private Label manoComputadorLabel;
+
+    @FXML
     private Label puntajeLabel;
+
+    @FXML
+    private Label puntajeComputadorLabel;
 
     @FXML
     private Label estadoLabel;
@@ -70,14 +76,24 @@ public class BlackjackController {
                 .map(Carta::toString)
                 .collect(Collectors.joining(", "));
         manoLabel.setText("Tu mano: " + cartas);
+        String cartasComputador = juego.getManoComputador().stream()
+                .map(Carta::toString)
+                .collect(Collectors.joining(", "));
+        manoComputadorLabel.setText("Mano del computador: " + cartasComputador);
         puntajeLabel.setText("Puntaje: " + juego.getPuntaje());
+        puntajeComputadorLabel.setText(juego.getManoComputador().isEmpty()
+                ? "Puntaje del computador: —"
+                : "Puntaje del computador: " + juego.getPuntajeComputador());
         estadoLabel.setText(juego.getMensajeEstado());
         cartasRestantesLabel.setText("Cartas restantes en el mazo: "
                 + juego.getCartasRestantes());
-        boolean turnoActivo = juego.isTurnoJugadorActivo();
-        pedirCartaButton.setDisable(!turnoActivo || juego.mazoEstaVacio());
-        plantarseButton.setDisable(!turnoActivo);
-        iniciarRondaButton.setDisable(turnoActivo);
+        boolean turnoJugador = juego.getEstadoRonda()
+                == JuegoBlackjack.EstadoRonda.TURNO_JUGADOR;
+        boolean rondaTerminada = juego.getEstadoRonda()
+                == JuegoBlackjack.EstadoRonda.TERMINADA;
+        pedirCartaButton.setDisable(!turnoJugador || juego.mazoEstaVacio());
+        plantarseButton.setDisable(!turnoJugador);
+        iniciarRondaButton.setDisable(!rondaTerminada);
     }
 
     private void avisarMazoAgotado() {

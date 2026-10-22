@@ -40,15 +40,21 @@ class BJTest2VJugable {
         assertEquals(JuegoBlackjack.SituacionMano.VEINTIUNO,
                 evaluar(false, "As", "10"));
         assertEquals(JuegoBlackjack.SituacionMano.VEINTE_Y_MEDIO,
-                evaluar(true, "As", "3"));
+                evaluar(true, new Carta("J", Carta.Palo.P), new Carta("4", Carta.Palo.C)));
+        assertEquals(JuegoBlackjack.SituacionMano.VEINTE_Y_MEDIO, evaluar(true, "Q", "4"));
+        assertEquals(JuegoBlackjack.SituacionMano.VEINTE_Y_MEDIO, evaluar(true, "K", "4"));
+        assertEquals(JuegoBlackjack.SituacionMano.EN_JUEGO, evaluar(true, "9", "5"));
+        assertEquals(JuegoBlackjack.SituacionMano.EN_JUEGO, evaluar(true, "As", "3"));
+        assertEquals(JuegoBlackjack.SituacionMano.EN_JUEGO, evaluar(true, "10", "4"));
+        assertEquals(JuegoBlackjack.SituacionMano.EN_JUEGO, evaluar(false, "J", "4"));
         assertEquals(JuegoBlackjack.SituacionMano.PASARSE,
                 evaluar(false, "As", "As", "K", "K"));
     }
 
     @Test
-    void V02_HU07_VeinteYMedioPermiteContinuarYDesapareceAlCambiarPuntaje() {
-        JuegoBlackjack juego = crearJuego(new Carta("As", Carta.Palo.P),
-                new Carta("3", Carta.Palo.C), new Carta("4", Carta.Palo.D));
+    void V02_HU07_VeinteYMedioPermiteContinuarYPierdeValidezAlPedir() {
+        JuegoBlackjack juego = crearJuego(new Carta("J", Carta.Palo.P),
+                new Carta("4", Carta.Palo.C), new Carta("2", Carta.Palo.D));
 
         assertEquals(14, juego.getPuntaje());
         assertEquals(JuegoBlackjack.SituacionMano.VEINTE_Y_MEDIO,
@@ -58,7 +64,7 @@ class BJTest2VJugable {
 
         juego.pedirCarta();
 
-        assertEquals(18, juego.getPuntaje());
+        assertEquals(16, juego.getPuntaje());
         assertEquals(JuegoBlackjack.SituacionMano.EN_JUEGO,
                 juego.getSituacionMano());
         assertTrue(juego.isTurnoJugadorActivo());
@@ -131,6 +137,10 @@ class BJTest2VJugable {
                 .map(valor -> new Carta(valor, Carta.Palo.P))
                 .toList();
         return JuegoBlackjack.evaluarMano(mano, inicial);
+    }
+
+    private static JuegoBlackjack.SituacionMano evaluar(boolean inicial, Carta... cartas) {
+        return JuegoBlackjack.evaluarMano(List.of(cartas), inicial);
     }
 
     private static JuegoBlackjack crearJuego(Carta... cartasInicialesYRobadas) {

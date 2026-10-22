@@ -51,7 +51,7 @@ Si el jugador llega a 21, su turno termina solo y empieza el del computador. Si 
 |---|---|---|
 | Blackjack | As + carta de valor 10 (10, J, Q o K) **solo en las dos cartas iniciales** | Supera a cualquier mano que no sea Blackjack |
 | Veintiuno | Puntaje 21 sin cumplir la condición de Blackjack | Se compara con la mano del rival |
-| Veinte y medio | Puntaje de la mano igual a **14** | Mensaje especial; el jugador puede pedir o plantarse. Al comparar, vence a manos válidas de hasta 20; pierde contra cualquier 21. No paga extra |
+| Veinte y medio | Las dos cartas iniciales son una J, Q o K y un 4 | Mensaje especial; el jugador puede pedir o plantarse. Al comparar, vence a manos válidas de hasta 20; pierde contra cualquier 21. No paga extra |
 | Pasarse | Puntaje mayor a 21 tras ajustar ases | El participante pierde |
 | Empate | Ambos con Blackjack, o el mismo puntaje válido sin prioridad de Blackjack | Se devuelve la apuesta |
 
@@ -62,19 +62,19 @@ Ejemplos de decisión del ganador:
 | Blackjack | Sin Blackjack | Gana el jugador |
 | Blackjack | Blackjack | Empate |
 | 21 normal | 20 | Gana el jugador |
-| 14 (veinte y medio) | 20 | Gana el jugador |
-| 14 (veinte y medio) | 21 normal o Blackjack | Pierde el jugador |
-| 14 (veinte y medio) | 14 (veinte y medio) | Empate |
+| J/Q/K + 4 (veinte y medio) | 20 | Gana el jugador |
+| J/Q/K + 4 (veinte y medio) | 21 normal o Blackjack | Pierde el jugador |
+| J/Q/K + 4 (veinte y medio) | J/Q/K + 4 (veinte y medio) | Empate |
 | 18 | 17 | Gana el jugador |
 | 17 | 19 | Pierde el jugador |
 | 22 o más | Cualquiera | Pierde el jugador |
 
-Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válida de hasta 20 puntos, pero pierde contra cualquier 21, sea normal o Blackjack. Si ambos tienen Veinte y medio, hay empate.
+Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas iniciales sean una J, Q o K y un 4, sin importar el palo. Vence a cualquier mano válida de hasta 20 puntos, pierde contra cualquier 21, sea normal o Blackjack, y empata contra otro Veinte y medio.
 
 ## 4. Aclaraciones acordadas (respuestas a las dudas)
 
-1. **Veinte y medio = mano que suma 14.** Se informa con un mensaje y el jugador puede seguir jugando o plantarse. No gana automáticamente ni recibe pago adicional: al resolver la ronda, vence a una mano válida de hasta 20, pierde contra cualquier 21 y empata contra otro Veinte y medio.
-2. **El 14 se evalúa sobre el puntaje ya ajustado.** Ejemplo: As + 3 vale 14 (As como 11, "mano blanda") y activa el mensaje. Si al pedir otra carta el As baja a 1 y el puntaje deja de ser 14, el mensaje desaparece.
+1. **Veinte y medio solo es la combinación inicial de una figura (J, Q o K) y un 4.** Deben ser exactamente las dos cartas iniciales; el palo no importa. Otras manos que sumen 14, como 9 + 5, As + 3 o 10 + 4, no cuentan como Veinte y medio. Se informa con un mensaje y el jugador puede seguir jugando o plantarse. No recibe pago adicional: al resolver la ronda, vence a una mano válida de hasta 20, pierde contra cualquier 21 y empata contra otro Veinte y medio.
+2. **La jugada se reconoce por las cartas, no solo por el puntaje.** Si el jugador pide otra carta, deja de tener Veinte y medio y el estado se actualiza según su nuevo puntaje.
 3. **"Un diez" incluye 10, J, Q y K.** Un Blackjack es As + cualquiera de ellas en las dos cartas iniciales. Un As + 10 formado después de pedir más cartas (ejemplo: As + 5 + 5) es un 21 normal.
 4. **El sistema distingue Blackjack de 21 normal** viendo cómo se llegó al 21, no solo el puntaje. Con Blackjack vs 21 de tres cartas, gana el Blackjack.
 5. **El computador pide mientras su puntaje ajustado sea menor que 17.** Se planta con 17 o más, incluido el 17 blando (As + 6).
@@ -227,10 +227,11 @@ Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válid
 - **Tarea B: Veintiuno** (Alta | PDF)
   - Un puntaje de 21 que no cumple la condición de Blackjack se identifica como Veintiuno.
 - **Super tarea C: Veinte y medio** (Media | PDF)
-  - Cuando el puntaje ajustado es exactamente 14, se muestra un mensaje especial.
+  - Si las dos cartas iniciales son una J, Q o K y un 4, sin importar el palo, se muestra el mensaje especial «Veinte y medio».
+  - Otras manos con puntaje 14 (por ejemplo, 9 + 5, As + 3 o 10 + 4) no se reconocen como Veinte y medio.
   - El jugador puede seguir pidiendo o plantarse.
-  - Si al pedir carta el puntaje deja de ser 14, el mensaje desaparece.
-  - No hay pago ni victoria automática por esta jugada.
+  - Si el jugador pide otra carta, deja de ser Veinte y medio y se evalúa el nuevo estado de su mano.
+  - La jugada no produce victoria automática ni pago adicional.
 - **Tarea D: Pasarse** (Alta | PDF)
   - Superar 21 tras ajustar los ases se identifica como «Pasarse» con su mensaje.
 
@@ -291,7 +292,7 @@ Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válid
   - El Blackjack supera a cualquier mano que no sea Blackjack, incluso a un 21 de varias cartas.
   - Blackjack contra Blackjack es empate.
   - Sin Blackjack, gana el puntaje válido más alto; el mismo puntaje es empate.
-  - El Veinte y medio vence a cualquier mano válida de hasta 20 puntos, pierde contra cualquier 21 (incluido el Blackjack) y empata contra otro Veinte y medio.
+  - La combinación inicial J/Q/K + 4 (Veinte y medio) vence a cualquier mano válida de hasta 20 puntos, pierde contra cualquier 21 (incluido el Blackjack) y empata contra otra combinación Veinte y medio.
   - El participante que supera 21 pierde; Veinte y medio no da una victoria automática ni un pago adicional.
 - **Tarea B: Mensaje de resultado** (Alta | PDF)
   - Al terminar la ronda se informa victoria, derrota o empate, y la razón (ejemplo: «el computador se pasó»).
@@ -377,7 +378,7 @@ Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válid
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Botón «Ver reglas»** (Alta | PDF)
   - Existe el botón «Ver reglas», que muestra una ventana con las reglas resumidas del juego.
-  - Las reglas explican el objetivo, los valores de las cartas, el ajuste de ases, las apuestas y sus pagos, las jugadas especiales (incluida la prioridad de Blackjack y Veinte y medio = 14) y las reglas del computador.
+  - Las reglas explican el objetivo, los valores de las cartas, el ajuste de ases, las apuestas y sus pagos, las jugadas especiales (incluidas la prioridad de Blackjack y la combinación J/Q/K + 4 para Veinte y medio) y las reglas del computador.
 - **Tarea B: Conservar la partida** (Alta | PDF)
   - Al cerrar las reglas, manos, saldo, apuesta y estado de la ronda siguen intactos.
 
@@ -419,7 +420,7 @@ Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válid
   - Puntajes de ambos, saldo y apuesta vigente a la vista.
 - **Super tarea B: Mensajes de estado** (Alta | PDF)
   - Se indica el turno actual (apostar, turno del jugador, turno del computador).
-  - Se informan las jugadas especiales: Blackjack, Veintiuno, Veinte y medio y Pasarse.
+  - Se informan las jugadas especiales: Blackjack, Veintiuno, Veinte y medio (solo con J/Q/K + 4 iniciales) y Pasarse.
   - Se informa el resultado final de la ronda.
 - **Tarea C: Revisión de textos** (Baja | Propuesta)
   - Los mensajes están en español, son consistentes entre sí y no muestran errores técnicos al usuario.
@@ -442,12 +443,12 @@ Veinte y medio no se compara como un 14 ordinario: vence a cualquier mano válid
   - Comprobar desde la ventana que se muestran la mano y las cartas restantes, que el botón reparte una carta por clic y que al agotarse el mazo se informa y se deshabilita el botón. Registrar estos casos como pruebas de aceptación manuales mientras no haya pruebas automatizadas de la interfaz.
 - **Super tarea B: Pruebas de la versión 2 — Jugable** (Alta | PDF)
   - Verificar valores de cartas, cálculo con As + 9 y luego 5, y manos con varios ases: As + As + 9, As + As + K y As + As + K + K.
-  - Distinguir Blackjack inicial (As + 10) de un 21 formado con tres o más cartas; probar también Veintiuno y Veinte y medio con 14, incluido el cambio de mensaje cuando el puntaje cambia al pedir.
+  - Distinguir Blackjack inicial (As + 10) de un 21 formado con tres o más cartas; probar Veintiuno y Veinte y medio con J/Q/K + 4 iniciales, con palos iguales y distintos. Confirmar que 9 + 5, As + 3 y 10 + 4 no son Veinte y medio, y que pedir otra carta termina esa jugada especial.
   - Comprobar que al llegar a 21 termina el turno, al superar 21 se pierde y se bloquean las acciones, y que una nueva ronda renueva el mazo y la mano.
 - **Super tarea C: Pruebas de la versión 3 — Rival** (Alta | PDF)
   - Comprobar que el computador no recibe cartas antes de su turno, recibe dos al iniciarlo, pide con 16 y se planta con 17 y con As + 6.
   - Comprobar que el computador reconoce Blackjack inicial, que Blackjack vence a un 21 del jugador formado con más de dos cartas y que dos Blackjack empatan sin repetir cartas físicas.
-  - Probar que el jugador que se pasa pierde sin turno del computador, que el computador pierde al pasarse y que las manos de 14 empatan entre sí, vencen a manos válidas de hasta 20 y pierden contra cualquier 21.
+  - Probar que el jugador que se pasa pierde sin turno del computador, que el computador pierde al pasarse y que las combinaciones iniciales J/Q/K + 4 empatan entre sí, vencen a manos válidas de hasta 20 y pierden contra cualquier 21.
 - **Super tarea D: Pruebas de la versión 4 — Economía** (Alta | PDF)
   - Rechazar campo vacío, texto, decimales, negativos, cero, valores menores de 10, no múltiplos de 10 y apuestas superiores al saldo, sin repartir ni modificar el saldo.
   - Comprobar que con saldo 1.000 se acepta apostar 1.000 y que el descuento ocurre al iniciar, no al escribir; validar los saldos finales 900, 1.000, 1.100 y 1.150 con apuesta de 100.

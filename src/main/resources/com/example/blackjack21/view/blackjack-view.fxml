@@ -16,6 +16,9 @@
     <Label text="Jugador" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
     <Label fx:id="manoLabel" wrapText="true"/>
     <Label fx:id="puntajeLabel"/>
+    <Label text="Computador" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <Label fx:id="manoComputadorLabel" wrapText="true"/>
+    <Label fx:id="puntajeComputadorLabel"/>
     <Label fx:id="estadoLabel" wrapText="true"/>
     <Label fx:id="cartasRestantesLabel"/>
     <Button fx:id="pedirCartaButton" text="Pedir carta" onAction="#onPedirCarta"/>
