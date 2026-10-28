@@ -451,8 +451,9 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
   - Probar que el jugador que se pasa pierde sin turno del computador, que el computador pierde al pasarse y que las combinaciones iniciales J/Q/K + 4 empatan entre sí, vencen a manos válidas de hasta 20 y pierden contra cualquier 21.
 - **Super tarea D: Pruebas de la versión 4 — Economía** (Alta | PDF)
   - Rechazar campo vacío, texto, decimales, negativos, cero, valores menores de 10, no múltiplos de 10 y apuestas superiores al saldo, sin repartir ni modificar el saldo.
-  - Comprobar que con saldo 1.000 se acepta apostar 1.000 y que el descuento ocurre al iniciar, no al escribir; validar los saldos finales 900, 1.000, 1.100 y 1.150 con apuesta de 100.
-  - Comprobar que cada resultado liquida una sola vez, que con menos de 10 fichas no se inicia otra ronda y que con exactamente 10 sí se puede.
+  - Comprobar que antes de la primera apuesta las manos están vacías y el saldo inicial es 1.000; apostar el saldo completo es válido y el descuento solo ocurre al iniciar la ronda.
+  - Con apuesta de 100, validar saldos finales de 900 en derrota, 1.000 en empate, 1.100 en victoria ordinaria y 1.150 en victoria con Blackjack; el empate con Blackjack devuelve solo la apuesta.
+  - Comprobar que cada resultado liquida una sola vez, que con menos de 10 fichas no se inicia otra ronda y que con exactamente 10 sí se puede apostar.
 - **Super tarea E: Pruebas de la versión 5 — Completa** (Alta | PDF)
   - Verificar correspondencia entre cartas e imágenes y, si se implementa el manejo opcional de imágenes faltantes, comprobar que se informa sin cerrar la aplicación.
   - Abrir y cerrar las reglas antes de una ronda y durante una ronda; confirmar que no cambian manos, mazo, turno, apuesta, saldo ni resultado.

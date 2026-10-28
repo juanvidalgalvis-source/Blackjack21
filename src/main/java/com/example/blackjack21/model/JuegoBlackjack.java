@@ -2,6 +2,7 @@ package com.example.blackjack21.model;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class JuegoBlackjack {
     public enum SituacionMano {
@@ -13,6 +14,7 @@ public class JuegoBlackjack {
     }
 
     public enum EstadoRonda {
+        ESPERANDO_APUESTA,
         TURNO_JUGADOR,
         TURNO_COMPUTADOR,
         TERMINADA
@@ -26,6 +28,7 @@ public class JuegoBlackjack {
     }
 
     private Mazo mazo;
+    private final Supplier<Mazo> mazoFactory;
     private final LinkedList<Carta> mano = new LinkedList<>();
     private final LinkedList<Carta> manoComputador = new LinkedList<>();
     private boolean turnoJugadorActivo;
@@ -34,13 +37,85 @@ public class JuegoBlackjack {
     private EstadoRonda estadoRonda;
     private ResultadoRonda resultadoRonda;
     private String mensajeResultado;
+    private long saldo = 1_000;
+    private Long apuestaActual;
+    private long fichasAcreditadas;
+    private boolean juegoTerminado;
 
     public JuegoBlackjack() {
-        this(new Mazo());
+        this(Mazo::new);
+    }
+
+    JuegoBlackjack(Supplier<Mazo> mazoFactory) {
+        this.mazoFactory = mazoFactory;
+        estadoRonda = EstadoRonda.ESPERANDO_APUESTA;
+        resultadoRonda = ResultadoRonda.EN_CURSO;
+        situacionMano = SituacionMano.EN_JUEGO;
+        situacionComputador = SituacionMano.EN_JUEGO;
+        mensajeResultado = "Ingresa una apuesta para comenzar.";
     }
 
     JuegoBlackjack(Mazo mazo) {
+        this(mazo, Mazo::new);
+    }
+
+    JuegoBlackjack(Mazo mazo, Supplier<Mazo> mazoFactory) {
+        this(mazoFactory);
         this.mazo = mazo;
+        repartirManoInicial();
+    }
+
+    public void iniciarRonda(String apuestaIngresada) {
+        if (apuestaIngresada == null || apuestaIngresada.isBlank()) {
+            throw new IllegalArgumentException("Ingresa una apuesta.");
+        }
+        if (!apuestaIngresada.matches("[0-9]+")) {
+            throw new IllegalArgumentException("La apuesta debe ser un número entero.");
+        }
+        final long apuesta;
+        try {
+            apuesta = Long.parseLong(apuestaIngresada);
+        } catch (NumberFormatException excepcion) {
+            throw new IllegalArgumentException("La apuesta ingresada está fuera del rango permitido.",
+                    excepcion);
+        }
+        iniciarRonda(apuesta);
+    }
+
+    public void iniciarRonda(long apuesta) {
+        if (juegoTerminado) {
+            throw new IllegalStateException("El juego terminó: no hay fichas suficientes para apostar.");
+        }
+        if (estadoRonda != EstadoRonda.ESPERANDO_APUESTA
+                && estadoRonda != EstadoRonda.TERMINADA) {
+            throw new IllegalStateException("No se puede iniciar otra ronda antes de terminar la actual.");
+        }
+        if (apuesta < 10) {
+            throw new IllegalArgumentException("La apuesta mínima es de 10 fichas.");
+        }
+        if (apuesta % 10 != 0) {
+            throw new IllegalArgumentException("La apuesta debe ser múltiplo de 10.");
+        }
+        if (saldo < 10) {
+            throw new IllegalStateException("No hay fichas suficientes para iniciar otra ronda.");
+        }
+        if (apuesta > saldo) {
+            throw new IllegalArgumentException("La apuesta no puede superar el saldo disponible.");
+        }
+        if (apuesta > Long.MAX_VALUE / 5) {
+            throw new IllegalArgumentException("La apuesta es demasiado alta para calcular el pago.");
+        }
+        long pagoMaximo = apuesta * 5 / 2;
+        if (saldo - apuesta > Long.MAX_VALUE - pagoMaximo) {
+            throw new IllegalArgumentException("La apuesta es demasiado alta para calcular el pago.");
+        }
+
+        apuestaActual = apuesta;
+        saldo -= apuesta;
+        fichasAcreditadas = 0;
+        mazo = mazoFactory.get();
+        mano.clear();
+        manoComputador.clear();
         repartirManoInicial();
     }
 
@@ -81,16 +156,6 @@ public class JuegoBlackjack {
         }
         turnoJugadorActivo = false;
         jugarTurnoComputador();
-    }
-
-    public void iniciarNuevaRonda() {
-        if (estadoRonda != EstadoRonda.TERMINADA) {
-            throw new IllegalStateException("No se puede iniciar otra ronda antes de terminar la actual.");
-        }
-        mazo = new Mazo();
-        mano.clear();
-        manoComputador.clear();
-        repartirManoInicial();
     }
 
     private void actualizarSituacion(boolean manoInicial) {
@@ -184,9 +249,31 @@ public class JuegoBlackjack {
             return;
         }
         resultadoRonda = resultado;
-        mensajeResultado = mensaje;
+        liquidarApuesta(resultado);
+        mensajeResultado = mensaje + " Fichas acreditadas: " + fichasAcreditadas
+                + ". Saldo disponible: " + saldo + ".";
         estadoRonda = EstadoRonda.TERMINADA;
         turnoJugadorActivo = false;
+        juegoTerminado = saldo < 10;
+        if (juegoTerminado) {
+            mensajeResultado += " Fin del juego: no tienes fichas suficientes para otra ronda.";
+        }
+    }
+
+    private void liquidarApuesta(ResultadoRonda resultado) {
+        if (apuestaActual == null) {
+            fichasAcreditadas = 0;
+            return;
+        }
+        fichasAcreditadas = switch (resultado) {
+            case EN_CURSO, DERROTA -> 0;
+            case EMPATE -> apuestaActual;
+            case VICTORIA -> situacionMano == SituacionMano.BLACKJACK
+                    ? apuestaActual * 5 / 2
+                    : apuestaActual * 2;
+        };
+        saldo += fichasAcreditadas;
+        apuestaActual = null;
     }
 
     public static int calcularPuntaje(List<Carta> mano) {
@@ -253,6 +340,22 @@ public class JuegoBlackjack {
         return calcularPuntaje(manoComputador);
     }
 
+    public long getSaldo() {
+        return saldo;
+    }
+
+    public Long getApuestaActual() {
+        return apuestaActual;
+    }
+
+    public long getFichasAcreditadas() {
+        return fichasAcreditadas;
+    }
+
+    public boolean isJuegoTerminado() {
+        return juegoTerminado;
+    }
+
     public SituacionMano getSituacionMano() {
         return situacionMano;
     }
@@ -278,6 +381,9 @@ public class JuegoBlackjack {
     }
 
     public String getMensajeEstado() {
+        if (estadoRonda == EstadoRonda.ESPERANDO_APUESTA) {
+            return mensajeResultado;
+        }
         if (estadoRonda == EstadoRonda.TERMINADA) {
             return mensajeResultado;
         }
@@ -296,10 +402,10 @@ public class JuegoBlackjack {
     }
 
     public int getCartasRestantes() {
-        return mazo.getCartasRestantes();
+        return mazo == null ? 0 : mazo.getCartasRestantes();
     }
 
     public boolean mazoEstaVacio() {
-        return mazo.estaVacio();
+        return mazo == null || mazo.estaVacio();
     }
 }

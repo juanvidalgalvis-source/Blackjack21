@@ -111,10 +111,11 @@ class BJTest2VJugable {
         assertFalse(juego.isTurnoJugadorActivo());
         assertThrows(IllegalStateException.class, juego::pedirCarta);
 
-        juego.iniciarNuevaRonda();
+        juego.iniciarRonda(10);
 
         assertEquals(2, juego.getMano().size());
         assertEquals(50, juego.getCartasRestantes());
+        assertEquals(990, juego.getSaldo());
     }
 
     @Test
@@ -122,7 +123,7 @@ class BJTest2VJugable {
         JuegoBlackjack juego = crearJuego(new Carta("8", Carta.Palo.P),
                 new Carta("5", Carta.Palo.C));
 
-        assertThrows(IllegalStateException.class, juego::iniciarNuevaRonda);
+        assertThrows(IllegalStateException.class, () -> juego.iniciarRonda(10));
     }
 
     private static int puntaje(String... valores) {
@@ -154,6 +155,7 @@ class BJTest2VJugable {
         List<Carta> ordenReparto = new ArrayList<>(List.of(cartasInicialesYRobadas));
         todasLasCartas.removeAll(ordenReparto);
         ordenReparto.addAll(todasLasCartas);
-        return new JuegoBlackjack(new Mazo(ordenReparto));
+        return new JuegoBlackjack(new Mazo(ordenReparto),
+                () -> new Mazo(ordenReparto));
     }
 }

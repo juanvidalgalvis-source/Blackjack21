@@ -206,14 +206,14 @@ class BJTest3VRival {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
                 carta("10", Carta.Palo.D), carta("8", Carta.Palo.T));
-        assertThrows(IllegalStateException.class, juego::iniciarNuevaRonda);
+        assertThrows(IllegalStateException.class, () -> juego.iniciarRonda(10));
 
         juego.plantarse();
         JuegoBlackjack.ResultadoRonda resultado = juego.getResultadoRonda();
         assertThrows(IllegalStateException.class, juego::plantarse);
         assertEquals(resultado, juego.getResultadoRonda());
 
-        juego.iniciarNuevaRonda();
+        juego.iniciarRonda(10);
         assertEquals(JuegoBlackjack.EstadoRonda.TURNO_JUGADOR, juego.getEstadoRonda());
         assertTrue(juego.getManoComputador().isEmpty());
         assertEquals(JuegoBlackjack.ResultadoRonda.EN_CURSO, juego.getResultadoRonda());
@@ -236,7 +236,8 @@ class BJTest3VRival {
                 "La prueba no debe repartir la misma carta física más de una vez.");
         todasLasCartas.removeAll(ordenReparto);
         ordenReparto.addAll(todasLasCartas);
-        return new JuegoBlackjack(new Mazo(ordenReparto));
+        return new JuegoBlackjack(new Mazo(ordenReparto),
+                () -> new Mazo(ordenReparto));
     }
 
     private static List<Carta> cartasRepartidas(JuegoBlackjack juego) {

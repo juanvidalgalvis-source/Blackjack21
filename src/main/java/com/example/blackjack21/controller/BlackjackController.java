@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.util.stream.Collectors;
 
@@ -28,7 +29,16 @@ public class BlackjackController {
     private Label estadoLabel;
 
     @FXML
+    private Label saldoLabel;
+
+    @FXML
+    private Label apuestaVigenteLabel;
+
+    @FXML
     private Label cartasRestantesLabel;
+
+    @FXML
+    private TextField apuestaTextField;
 
     @FXML
     private Button pedirCartaButton;
@@ -67,7 +77,12 @@ public class BlackjackController {
 
     @FXML
     private void onIniciarRonda() {
-        juego.iniciarNuevaRonda();
+        try {
+            juego.iniciarRonda(apuestaTextField.getText());
+        } catch (IllegalArgumentException | IllegalStateException excepcion) {
+            mostrarErrorApuesta(excepcion.getMessage());
+            return;
+        }
         actualizarVista();
     }
 
@@ -85,15 +100,35 @@ public class BlackjackController {
                 ? "Puntaje del computador: —"
                 : "Puntaje del computador: " + juego.getPuntajeComputador());
         estadoLabel.setText(juego.getMensajeEstado());
-        cartasRestantesLabel.setText("Cartas restantes en el mazo: "
-                + juego.getCartasRestantes());
+        saldoLabel.setText("Saldo disponible: " + juego.getSaldo() + " fichas");
+        apuestaVigenteLabel.setText(juego.getApuestaActual() == null
+                ? "Apuesta vigente: ninguna"
+                : "Apuesta vigente: " + juego.getApuestaActual() + " fichas");
+        cartasRestantesLabel.setText(juego.getEstadoRonda()
+                == JuegoBlackjack.EstadoRonda.ESPERANDO_APUESTA
+                ? "Cartas restantes en el mazo: —"
+                : "Cartas restantes en el mazo: " + juego.getCartasRestantes());
         boolean turnoJugador = juego.getEstadoRonda()
                 == JuegoBlackjack.EstadoRonda.TURNO_JUGADOR;
         boolean rondaTerminada = juego.getEstadoRonda()
                 == JuegoBlackjack.EstadoRonda.TERMINADA;
+        boolean puedeIniciar = (juego.getEstadoRonda()
+                == JuegoBlackjack.EstadoRonda.ESPERANDO_APUESTA || rondaTerminada)
+                && !juego.isJuegoTerminado();
         pedirCartaButton.setDisable(!turnoJugador || juego.mazoEstaVacio());
         plantarseButton.setDisable(!turnoJugador);
-        iniciarRondaButton.setDisable(!rondaTerminada);
+        iniciarRondaButton.setDisable(!puedeIniciar);
+        apuestaTextField.setDisable(turnoJugador
+                || juego.getEstadoRonda() == JuegoBlackjack.EstadoRonda.TURNO_COMPUTADOR
+                || juego.isJuegoTerminado());
+    }
+
+    private void mostrarErrorApuesta(String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle("Apuesta no válida");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 
     private void avisarMazoAgotado() {

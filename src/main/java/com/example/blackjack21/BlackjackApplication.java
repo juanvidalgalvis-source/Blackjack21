@@ -12,7 +12,7 @@ public class BlackjackApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(
                 BlackjackApplication.class.getResource("view/blackjack-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 520, 480);
+        Scene scene = new Scene(fxmlLoader.load(), 520, 580);
         stage.setTitle("Blackjack 21 - Reparto de cartas");
         stage.setScene(scene);
         stage.show();
