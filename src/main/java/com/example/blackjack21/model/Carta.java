@@ -20,3 +20,5 @@ public record Carta(String valor, Palo palo) {
         return valor + palo;
     }
 }
+
+//---
