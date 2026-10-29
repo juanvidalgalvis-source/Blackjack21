@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BJTest2VJugable {
     @Test
+    // Comprueba los valores de cartas y que el palo no cambie el puntaje.
     void V02_HU05_CalculaValoresDeCartasYNoDependeDelPalo() {
         List<Carta> mano = List.of(
                 new Carta("2", Carta.Palo.P),
@@ -23,6 +24,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba cómo se ajusta el valor de uno o varios ases.
     void V02_HU05_AjustaUnoYVariosAsesAlMayorPuntajeValido() {
         assertEquals(20, puntaje("As", "9"));
         assertEquals(15, puntaje("As", "9", "5"));
@@ -32,6 +34,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba la identificación de Blackjack, Veintiuno, Veinte y medio y Pasarse.
     void V02_HU07_DistingueBlackjackVeintiunoVeinteYMedioYPasarse() {
         assertEquals(JuegoBlackjack.SituacionMano.BLACKJACK,
                 evaluar(true, "As", "10"));
@@ -52,6 +55,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba que Veinte y medio permita pedir y deje de aplicar al recibir otra carta.
     void V02_HU07_VeinteYMedioPermiteContinuarYPierdeValidezAlPedir() {
         JuegoBlackjack juego = crearJuego(new Carta("J", Carta.Palo.P),
                 new Carta("4", Carta.Palo.C), new Carta("2", Carta.Palo.D));
@@ -71,6 +75,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba que un Blackjack inicial termine el turno del jugador.
     void V02_HU06_BlackjackInicialTerminaElTurnoYBloqueaAcciones() {
         JuegoBlackjack juego = crearJuego(new Carta("As", Carta.Palo.P),
                 new Carta("Q", Carta.Palo.C));
@@ -83,6 +88,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba que llegar a 21 o pasarse termine el turno del jugador.
     void V02_HU06_VeintiunoYPasarseTerminanElTurno() {
         JuegoBlackjack veintiuno = crearJuego(new Carta("7", Carta.Palo.P),
                 new Carta("8", Carta.Palo.C), new Carta("6", Carta.Palo.D));
@@ -103,6 +109,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba que plantarse bloquee acciones y permita una nueva ronda.
     void V02_HU06_PlantarseBloqueaAccionesYPermiteIniciarOtraRonda() {
         JuegoBlackjack juego = crearJuego(new Carta("8", Carta.Palo.P),
                 new Carta("5", Carta.Palo.C));
@@ -119,6 +126,7 @@ class BJTest2VJugable {
     }
 
     @Test
+    // Comprueba que no se inicie otra ronda durante el turno actual.
     void V02_HU08_NoPermiteIniciarOtraRondaDuranteElTurno() {
         JuegoBlackjack juego = crearJuego(new Carta("8", Carta.Palo.P),
                 new Carta("5", Carta.Palo.C));
@@ -126,6 +134,7 @@ class BJTest2VJugable {
         assertThrows(IllegalStateException.class, () -> juego.iniciarRonda(10));
     }
 
+    // Calcula el puntaje de una mano creada a partir de sus valores.
     private static int puntaje(String... valores) {
         return JuegoBlackjack.calcularPuntaje(
                 List.of(valores).stream()
@@ -133,6 +142,7 @@ class BJTest2VJugable {
                         .toList());
     }
 
+    // Evalúa una mano de prueba creada a partir de sus valores.
     private static JuegoBlackjack.SituacionMano evaluar(boolean inicial, String... valores) {
         List<Carta> mano = List.of(valores).stream()
                 .map(valor -> new Carta(valor, Carta.Palo.P))
@@ -140,10 +150,12 @@ class BJTest2VJugable {
         return JuegoBlackjack.evaluarMano(mano, inicial);
     }
 
+    // Evalúa una mano de prueba creada a partir de cartas específicas.
     private static JuegoBlackjack.SituacionMano evaluar(boolean inicial, Carta... cartas) {
         return JuegoBlackjack.evaluarMano(List.of(cartas), inicial);
     }
 
+    // Prepara un mazo de prueba con un orden de reparto conocido.
     private static JuegoBlackjack crearJuego(Carta... cartasInicialesYRobadas) {
         List<Carta> todasLasCartas = new ArrayList<>();
         for (Carta.Palo palo : Carta.Palo.values()) {

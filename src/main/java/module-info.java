@@ -1,3 +1,4 @@
+// Declara los módulos JavaFX y los paquetes usados por la aplicación.
 module com.example.blackjack21 {
     requires javafx.controls;
     requires javafx.fxml;

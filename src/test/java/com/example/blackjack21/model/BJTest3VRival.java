@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BJTest3VRival {
     @Test
+    // Comprueba que el computador espere y que ambas manos sean listas enlazadas.
     void V03_HU09_ComputadorEsperaYAmbasManosUsanLinkedList() throws NoSuchFieldException {
         assertEquals(LinkedList.class,
                 JuegoBlackjack.class.getDeclaredField("mano").getType());
@@ -37,6 +38,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el computador no reciba cartas si el jugador se pasa.
     void V03_HU09_JugadorSePasaYElComputadorNoRecibeCartas() {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("6", Carta.Palo.C),
@@ -51,6 +53,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el Blackjack del jugador active automáticamente al computador.
     void V03_HU09_BlackjackDelJugadorIniciaElTurnoComputadorAutomaticamente() {
         JuegoBlackjack juego = crearJuego(
                 carta("As", Carta.Palo.P), carta("K", Carta.Palo.C),
@@ -63,6 +66,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que llegar a 21 inicie automáticamente el turno del computador.
     void V03_HU09_VeintiunoAlPedirIniciaElTurnoComputadorAutomaticamente() {
         JuegoBlackjack juego = crearJuego(
                 carta("7", Carta.Palo.P), carta("8", Carta.Palo.C), carta("6", Carta.Palo.D),
@@ -76,6 +80,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el computador pida con 16 y se plante con 17.
     void V03_HU10_ComputadorPideCon16YSePlantaCon17() {
         JuegoBlackjack pide = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -95,6 +100,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el computador se plante con un 17 blando.
     void V03_HU10_ComputadorSePlantaCon17Blando() {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -108,6 +114,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que las decisiones del computador no dependan de la mano del jugador.
     void V03_HU10_DecisionesDelComputadorNoDependenDelPuntajeDelJugador() {
         JuegoBlackjack juego = crearJuego(
                 carta("K", Carta.Palo.P), carta("Q", Carta.Palo.C),
@@ -121,6 +128,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el computador reconozca un Blackjack inicial.
     void V03_HU10_ComputadorReconoceBlackjackInicial() {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("6", Carta.Palo.C),
@@ -135,6 +143,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba la prioridad de Blackjack y el empate entre dos Blackjack.
     void V03_HU11_BlackjackGanaA21DeTresCartasYDosBlackjackEmpatan() {
         JuegoBlackjack blackjackContraVeintiuno = crearJuego(
                 carta("7", Carta.Palo.P), carta("7", Carta.Palo.C), carta("7", Carta.Palo.D),
@@ -157,6 +166,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba la comparación de puntajes y el empate entre manos iguales.
     void V03_HU11_ComparaManosValidasYEmpataConPuntajesIguales() {
         JuegoBlackjack victoria = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -173,6 +183,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el jugador gane cuando el computador se pasa.
     void V03_HU11_ComputadorQueSePasaHaceGanarAlJugador() {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -186,6 +197,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba las reglas especiales para comparar Veinte y medio.
     void V03_HU11_VeinteYMedioRespetaLaPrioridadDeLaManoRival() {
         JuegoBlackjack ganaContra20 = crearJuego(
                 carta("J", Carta.Palo.P), carta("4", Carta.Palo.C),
@@ -202,6 +214,7 @@ class BJTest3VRival {
     }
 
     @Test
+    // Comprueba que el resultado se cierre una vez y luego permita otra ronda.
     void V03_HU11_ResultadoSeCalculaUnaVezYSoloPermiteIniciarRondaAlTerminar() {
         JuegoBlackjack juego = crearJuego(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -219,10 +232,12 @@ class BJTest3VRival {
         assertEquals(JuegoBlackjack.ResultadoRonda.EN_CURSO, juego.getResultadoRonda());
     }
 
+    // Crea una carta para los escenarios de prueba.
     private static Carta carta(String valor, Carta.Palo palo) {
         return new Carta(valor, palo);
     }
 
+    // Prepara un juego con las primeras cartas en un orden conocido.
     private static JuegoBlackjack crearJuego(Carta... cartasInicialesYRobadas) {
         List<Carta> todasLasCartas = new ArrayList<>();
         for (Carta.Palo palo : Carta.Palo.values()) {
@@ -240,6 +255,7 @@ class BJTest3VRival {
                 () -> new Mazo(ordenReparto));
     }
 
+    // Reúne las cartas repartidas a ambos participantes.
     private static List<Carta> cartasRepartidas(JuegoBlackjack juego) {
         List<Carta> cartas = new ArrayList<>(juego.getMano());
         cartas.addAll(juego.getManoComputador());

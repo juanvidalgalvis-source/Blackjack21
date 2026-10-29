@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BJTest4VEconomia {
     @Test
+    // Comprueba que el juego comience sin repartir y con el saldo inicial.
     void V04_HU12_IniciaSinRepartirConSaldoDeMilFichas() {
         JuegoBlackjack juego = new JuegoBlackjack();
 
@@ -25,6 +26,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que las apuestas inválidas no repartan cartas ni descuenten saldo.
     void V04_HU12_RechazaApuestasInvalidasSinRepartirNiDescontar() {
         JuegoBlackjack juego = new JuegoBlackjack();
 
@@ -40,6 +42,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que una apuesta válida se descuente al iniciar y no cambie durante la ronda.
     void V04_HU12_DescuentaUnaApuestaValidaAlIniciarYLaMantieneFija() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -57,6 +60,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que se pueda apostar todo el saldo disponible.
     void V04_HU12_AceptaApostarElSaldoCompleto() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -70,6 +74,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que una derrota no acredite fichas.
     void V04_HU13_LiquidaUnaDerrotaSinAcreditarFichas() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("7", Carta.Palo.C),
@@ -85,6 +90,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que un empate devuelva la apuesta.
     void V04_HU13_DevuelveLaApuestaEnUnEmpate() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("8", Carta.Palo.C),
@@ -99,6 +105,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba el pago de una victoria ordinaria.
     void V04_HU13_AcreditaDosVecesLaApuestaEnVictoriaOrdinaria() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("10", Carta.Palo.C),
@@ -113,6 +120,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba el pago adicional por una victoria con Blackjack.
     void V04_HU13_AcreditaDosYCincoVecesLaApuestaPorBlackjackInicial() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("As", Carta.Palo.P), carta("K", Carta.Palo.C),
@@ -125,6 +133,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que un empate con Blackjack solo devuelva la apuesta.
     void V04_HU13_EmpateConBlackjackDevuelveSoloLaApuesta() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("As", Carta.Palo.P), carta("K", Carta.Palo.C),
@@ -137,6 +146,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que una ronda no liquide la apuesta más de una vez.
     void V04_HU13_NoLiquidaLaApuestaDosVecesAlRepetirAcciones() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("10", Carta.Palo.C),
@@ -150,6 +160,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que el juego termine cuando el saldo queda por debajo de diez fichas.
     void V04_HU14_TerminaSiElSaldoBajaDeDiezYBloqueaNuevasApuestas() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("7", Carta.Palo.C),
@@ -165,6 +176,7 @@ class BJTest4VEconomia {
     }
 
     @Test
+    // Comprueba que un saldo de diez fichas aún permita iniciar otra ronda.
     void V04_HU14_ConSaldoExactoDeDiezTodaviaPermiteApostar() {
         JuegoBlackjack juego = juegoDeterminista(
                 carta("10", Carta.Palo.P), carta("7", Carta.Palo.C),
@@ -182,6 +194,7 @@ class BJTest4VEconomia {
         assertFalse(juego.isJuegoTerminado());
     }
 
+    // Prepara un juego de prueba con un orden de reparto conocido.
     private static JuegoBlackjack juegoDeterminista(Carta... ordenReparto) {
         List<Carta> cartas = new ArrayList<>();
         for (Carta.Palo palo : Carta.Palo.values()) {
@@ -197,6 +210,7 @@ class BJTest4VEconomia {
         return new JuegoBlackjack(() -> new Mazo(cartasFijas));
     }
 
+    // Crea una carta para los escenarios de prueba.
     private static Carta carta(String valor, Carta.Palo palo) {
         return new Carta(valor, palo);
     }

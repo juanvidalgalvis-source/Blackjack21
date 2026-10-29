@@ -42,10 +42,12 @@ public class JuegoBlackjack {
     private long fichasAcreditadas;
     private boolean juegoTerminado;
 
+    // Crea una partida nueva usando mazos mezclados.
     public JuegoBlackjack() {
         this(Mazo::new);
     }
 
+    // Prepara el estado inicial y define cómo se crearán los mazos.
     JuegoBlackjack(Supplier<Mazo> mazoFactory) {
         this.mazoFactory = mazoFactory;
         estadoRonda = EstadoRonda.ESPERANDO_APUESTA;
@@ -55,16 +57,19 @@ public class JuegoBlackjack {
         mensajeResultado = "Ingresa una apuesta para comenzar.";
     }
 
+    // Inicia una partida de prueba con un mazo indicado.
     JuegoBlackjack(Mazo mazo) {
         this(mazo, Mazo::new);
     }
 
+    // Inicia una partida de prueba con un mazo y su proveedor para nuevas rondas.
     JuegoBlackjack(Mazo mazo, Supplier<Mazo> mazoFactory) {
         this(mazoFactory);
         this.mazo = mazo;
         repartirManoInicial();
     }
 
+    // Valida el texto de la apuesta y comienza una ronda.
     public void iniciarRonda(String apuestaIngresada) {
         if (apuestaIngresada == null || apuestaIngresada.isBlank()) {
             throw new IllegalArgumentException("Ingresa una apuesta.");
@@ -82,6 +87,7 @@ public class JuegoBlackjack {
         iniciarRonda(apuesta);
     }
 
+    // Valida la cantidad apostada, descuenta fichas y reparte la mano inicial.
     public void iniciarRonda(long apuesta) {
         if (juegoTerminado) {
             throw new IllegalStateException("El juego terminó: no hay fichas suficientes para apostar.");
@@ -119,6 +125,7 @@ public class JuegoBlackjack {
         repartirManoInicial();
     }
 
+    // Reparte las dos cartas iniciales del jugador y revisa su mano.
     private void repartirManoInicial() {
         mano.add(mazo.sacarCarta());
         mano.add(mazo.sacarCarta());
@@ -134,6 +141,7 @@ public class JuegoBlackjack {
         }
     }
 
+    // Añade una carta al jugador y actualiza el estado de la ronda.
     public Carta pedirCarta() {
         if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
             throw new IllegalStateException("El turno del jugador ya terminó.");
@@ -150,6 +158,7 @@ public class JuegoBlackjack {
         return carta;
     }
 
+    // Termina el turno del jugador y permite jugar al computador.
     public void plantarse() {
         if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
             throw new IllegalStateException("El turno del jugador ya terminó.");
@@ -158,12 +167,14 @@ public class JuegoBlackjack {
         jugarTurnoComputador();
     }
 
+    // Actualiza la situación de la mano y si el jugador puede continuar.
     private void actualizarSituacion(boolean manoInicial) {
         situacionMano = evaluarMano(mano, manoInicial);
         turnoJugadorActivo = situacionMano == SituacionMano.EN_JUEGO
                 || situacionMano == SituacionMano.VEINTE_Y_MEDIO;
     }
 
+    // Reparte la mano del computador, juega según sus reglas y resuelve la ronda.
     private void jugarTurnoComputador() {
         if (estadoRonda != EstadoRonda.TURNO_JUGADOR) {
             return;
@@ -198,6 +209,7 @@ public class JuegoBlackjack {
         determinarResultado();
     }
 
+    // Compara las manos y define quién gana, pierde o empata.
     private void determinarResultado() {
         int puntajeJugador = calcularPuntaje(mano);
         int puntajeComputador = calcularPuntaje(manoComputador);
@@ -244,6 +256,7 @@ public class JuegoBlackjack {
         }
     }
 
+    // Guarda el resultado, liquida la apuesta y cierra la ronda.
     private void finalizarRonda(ResultadoRonda resultado, String mensaje) {
         if (estadoRonda == EstadoRonda.TERMINADA) {
             return;
@@ -260,6 +273,7 @@ public class JuegoBlackjack {
         }
     }
 
+    // Acredita las fichas correspondientes al resultado de la ronda.
     private void liquidarApuesta(ResultadoRonda resultado) {
         if (apuestaActual == null) {
             fichasAcreditadas = 0;
@@ -276,6 +290,7 @@ public class JuegoBlackjack {
         apuestaActual = null;
     }
 
+    // Calcula el puntaje de una mano considerando el valor flexible de los ases.
     public static int calcularPuntaje(List<Carta> mano) {
         int puntaje = 0;
         int ases = 0;
@@ -292,6 +307,7 @@ public class JuegoBlackjack {
         return puntaje;
     }
 
+    // Identifica la situación actual de una mano.
     public static SituacionMano evaluarMano(List<Carta> mano, boolean manoInicial) {
         int puntaje = calcularPuntaje(mano);
         if (puntaje > 21) {
@@ -309,6 +325,7 @@ public class JuegoBlackjack {
         return SituacionMano.EN_JUEGO;
     }
 
+    // Comprueba si la mano inicial contiene una figura y un cuatro.
     private static boolean esVeinteYMedio(List<Carta> mano) {
         if (mano.size() != 2) {
             return false;
@@ -319,67 +336,83 @@ public class JuegoBlackjack {
         return tieneCuatro && tieneFigura;
     }
 
+    // Comprueba si las dos cartas iniciales forman Blackjack.
     private static boolean esBlackjack(List<Carta> mano) {
         return mano.stream().anyMatch(carta -> "As".equals(carta.valor()))
                 && mano.stream().anyMatch(carta -> carta.getPuntajeBase() == 10);
     }
 
+    // Devuelve una copia de la mano del jugador.
     public List<Carta> getMano() {
         return List.copyOf(mano);
     }
 
+    // Devuelve una copia de la mano del computador.
     public List<Carta> getManoComputador() {
         return List.copyOf(manoComputador);
     }
 
+    // Devuelve el puntaje actual del jugador.
     public int getPuntaje() {
         return calcularPuntaje(mano);
     }
 
+    // Devuelve el puntaje actual del computador.
     public int getPuntajeComputador() {
         return calcularPuntaje(manoComputador);
     }
 
+    // Devuelve el saldo disponible del jugador.
     public long getSaldo() {
         return saldo;
     }
 
+    // Devuelve la apuesta de la ronda, si hay una activa.
     public Long getApuestaActual() {
         return apuestaActual;
     }
 
+    // Devuelve cuántas fichas se acreditaron en la última ronda.
     public long getFichasAcreditadas() {
         return fichasAcreditadas;
     }
 
+    // Indica si el saldo ya no permite iniciar otra ronda.
     public boolean isJuegoTerminado() {
         return juegoTerminado;
     }
 
+    // Devuelve la situación actual de la mano del jugador.
     public SituacionMano getSituacionMano() {
         return situacionMano;
     }
 
+    // Devuelve la situación actual de la mano del computador.
     public SituacionMano getSituacionComputador() {
         return situacionComputador;
     }
 
+    // Devuelve el estado actual de la ronda.
     public EstadoRonda getEstadoRonda() {
         return estadoRonda;
     }
 
+    // Devuelve el resultado de la ronda actual o anterior.
     public ResultadoRonda getResultadoRonda() {
         return resultadoRonda;
     }
 
+    // Devuelve el mensaje final de resultado.
     public String getMensajeResultado() {
         return mensajeResultado;
     }
 
+    // Indica si el turno del jugador sigue activo.
     public boolean isTurnoJugadorActivo() {
         return turnoJugadorActivo;
     }
 
+    // Devuelve el mensaje que corresponde al estado actual del juego.
     public String getMensajeEstado() {
         if (estadoRonda == EstadoRonda.ESPERANDO_APUESTA) {
             return mensajeResultado;
@@ -401,10 +434,12 @@ public class JuegoBlackjack {
         };
     }
 
+    // Devuelve cuántas cartas quedan en el mazo.
     public int getCartasRestantes() {
         return mazo == null ? 0 : mazo.getCartasRestantes();
     }
 
+    // Indica si el mazo actual está vacío o aún no se ha creado.
     public boolean mazoEstaVacio() {
         return mazo == null || mazo.estaVacio();
     }

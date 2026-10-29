@@ -3,6 +3,7 @@ package com.example.blackjack21;
 import javafx.application.Application;
 
 public class Launcher {
+    // Inicia la aplicación JavaFX.
     public static void main(String[] args) {
         Application.launch(BlackjackApplication.class, args);
     }

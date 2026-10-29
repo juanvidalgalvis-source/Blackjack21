@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class BJTest5VRecursosImagenes {
     @Test
+    // Comprueba que exista un recurso de imagen para cada carta del mazo.
     void V05_HU15_ExisteUnaImagenParaCadaCartaDelMazo() {
         int imagenesEncontradas = 0;
         for (Carta.Palo palo : Carta.Palo.values()) {

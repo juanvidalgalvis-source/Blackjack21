@@ -14,10 +14,12 @@ public class Mazo {
     private final Carta[] cartas;
     private int cartasRestantes = 52;
 
+    // Crea un mazo completo y mezcla sus cartas.
     public Mazo() {
         this(crearMazoMezclado());
     }
 
+    // Guarda las cartas recibidas en el orden en que se repartirán.
     Mazo(List<Carta> cartasEnOrdenDeReparto) {
         if (cartasEnOrdenDeReparto.size() != 52
                 || new HashSet<>(cartasEnOrdenDeReparto).size() != 52) {
@@ -29,6 +31,7 @@ public class Mazo {
         }
     }
 
+    // Construye y mezcla las 52 cartas posibles.
     private static List<Carta> crearMazoMezclado() {
         Carta[] cartas = new Carta[52];
         int indice = 0;
@@ -41,6 +44,7 @@ public class Mazo {
         return List.of(cartas);
     }
 
+    // Retira y devuelve la siguiente carta disponible.
     public Carta sacarCarta() {
         if (estaVacio()) {
             throw new NoSuchElementException("El mazo no tiene cartas.");
@@ -50,10 +54,12 @@ public class Mazo {
         return carta;
     }
 
+    // Indica si ya no quedan cartas en el mazo.
     public boolean estaVacio() {
         return cartasRestantes == 0;
     }
 
+    // Devuelve cuántas cartas siguen disponibles.
     public int getCartasRestantes() {
         return cartasRestantes;
     }

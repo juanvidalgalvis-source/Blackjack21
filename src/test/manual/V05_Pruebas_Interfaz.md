@@ -6,7 +6,7 @@ Estos casos verifican la interfaz JavaFX de HU-15 a HU-19. Son pruebas pendiente
 
 1. Desde la raíz del proyecto, ejecutar `.\mvnw.cmd javafx:run`.
 2. Confirmar que la ventana abre sin errores y que se puede interactuar con ella. Esta comprobación es solo una prueba de humo.
-3. Si los controles inferiores no aparecen en el área visible, desplazarse verticalmente hasta ellos.
+3. Reducir la ventana hasta su tamaño mínimo y comprobar que las acciones principales sigan visibles sin desplazamiento vertical.
 4. Para comprobar que abrir reglas o cancelar el cierre no altera el juego, anotar antes de la acción las cartas visibles, puntajes, saldo, apuesta y mensaje/estado.
 5. No borrar ni modificar recursos del proyecto para probar la imagen faltante. Usar una copia desechable del proyecto o de los recursos.
 
@@ -27,6 +27,7 @@ Estos casos verifican la interfaz JavaFX de HU-15 a HU-19. Son pruebas pendiente
 | V05-HU19-01 | HU-19 | Revisar la interfaz antes de la primera ronda, durante el turno del jugador y al terminar una ronda. | Se identifican ambas zonas; se muestran cartas, puntajes, saldo, apuesta y mensaje correspondiente al estado; al terminar se informa resultado, motivo y fichas acreditadas. | Pendiente | Pendiente |
 | V05-HU19-02 | HU-19 | Observar el mensaje de turno del computador al plantarse o al terminar automáticamente el turno del jugador. | El turno del computador se comunica en pantalla antes de presentar el resultado final. | Pendiente: verificar si el turno síncrono llega a renderizarse | Pendiente |
 | V05-HU19-03 | HU-19 | Observar mensajes de Blackjack, Veintiuno, Veinte y medio y Pasarse cuando se presenten durante el juego. | Cada situación se comunica en español y corresponde a la mano; Veinte y medio solo se anuncia para J/Q/K + 4 iniciales. | Pendiente | Pendiente |
+| V05-HU19-04 | HU-19 | Reducir la ventana hasta el tamaño mínimo configurado y comprobar el tablero y los controles en cada estado de ronda. | Sin scroll vertical se ven las dos manos, su puntaje, el estado, saldo, apuesta y todos los botones. Solo las cartas pueden requerir desplazamiento horizontal dentro de su mano. | Pendiente | Pendiente |
 
 ## Registro de ejecución
 

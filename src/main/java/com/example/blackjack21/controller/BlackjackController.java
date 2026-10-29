@@ -82,6 +82,7 @@ public class BlackjackController {
     @FXML
     private Button cerrarJuegoButton;
 
+    // Configura la confirmación que aparece al cerrar la ventana.
     public void configurarCierre(Stage stage) {
         this.stage = stage;
         stage.setOnCloseRequest(event -> {
@@ -91,12 +92,14 @@ public class BlackjackController {
         });
     }
 
+    // Carga las imágenes y presenta el estado inicial de la partida.
     @FXML
     private void initialize() {
         cargarImagenes();
         actualizarVista();
     }
 
+    // Pide una carta al modelo y actualiza lo que se ve en pantalla.
     @FXML
     private void onPedirCarta() {
         if (juego.mazoEstaVacio()) {
@@ -112,12 +115,14 @@ public class BlackjackController {
         }
     }
 
+    // Se planta el jugador y actualiza la pantalla con el resultado.
     @FXML
     private void onPlantarse() {
         juego.plantarse();
         actualizarVista();
     }
 
+    // Valida la apuesta escrita e inicia una ronda.
     @FXML
     private void onIniciarRonda() {
         try {
@@ -129,6 +134,7 @@ public class BlackjackController {
         actualizarVista();
     }
 
+    // Abre una ventana con un resumen de las reglas del juego.
     @FXML
     private void onVerReglas() {
         TextArea contenido = new TextArea(textoReglas());
@@ -148,6 +154,7 @@ public class BlackjackController {
         dialogo.showAndWait();
     }
 
+    // Cierra la aplicación si el jugador confirma la acción.
     @FXML
     private void onCerrarJuego() {
         if (confirmarCierre()) {
@@ -155,6 +162,7 @@ public class BlackjackController {
         }
     }
 
+    // Actualiza manos, puntajes, mensajes y controles de la pantalla.
     private void actualizarVista() {
         Set<Carta> faltantesVisibles = new LinkedHashSet<>();
         mostrarMano(manoCartasBox, juego.getMano(), faltantesVisibles);
@@ -188,6 +196,7 @@ public class BlackjackController {
         avisarImagenesFaltantes(faltantesVisibles);
     }
 
+    // Carga las imágenes disponibles para las cartas del mazo.
     private void cargarImagenes() {
         for (Carta.Palo palo : Carta.Palo.values()) {
             for (String valor : VALORES_CARTA) {
@@ -207,6 +216,7 @@ public class BlackjackController {
         }
     }
 
+    // Muestra las cartas de una mano como imágenes o como códigos de texto.
     private void mostrarMano(HBox contenedor, List<Carta> mano, Set<Carta> faltantesVisibles) {
         contenedor.getChildren().clear();
         for (Carta carta : mano) {
@@ -234,6 +244,7 @@ public class BlackjackController {
         }
     }
 
+    // Informa una vez cuando faltan imágenes de cartas que deben mostrarse.
     private void avisarImagenesFaltantes(Set<Carta> faltantesVisibles) {
         Set<Carta> nuevasFaltantes = new LinkedHashSet<>(faltantesVisibles);
         nuevasFaltantes.removeAll(imagenesFaltantesNotificadas);
@@ -253,6 +264,7 @@ public class BlackjackController {
         alerta.showAndWait();
     }
 
+    // Pregunta si se debe cerrar la ventana.
     private boolean confirmarCierre() {
         ButtonType cerrar = new ButtonType("Sí, cerrar", ButtonBar.ButtonData.YES);
         ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -265,6 +277,7 @@ public class BlackjackController {
         return alerta.showAndWait().filter(cerrar::equals).isPresent();
     }
 
+    // Prepara el texto breve que se muestra en la ventana de reglas.
     private String textoReglas() {
         return """
                 Objetivo
@@ -302,6 +315,7 @@ public class BlackjackController {
                 """;
     }
 
+    // Muestra un aviso cuando la apuesta ingresada no es válida.
     private void mostrarErrorApuesta(String mensaje) {
         Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.setTitle("Apuesta no válida");
@@ -310,6 +324,7 @@ public class BlackjackController {
         alerta.showAndWait();
     }
 
+    // Informa que no quedan cartas disponibles para repartir.
     private void avisarMazoAgotado() {
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
         alerta.setTitle("Mazo agotado");

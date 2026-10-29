@@ -422,6 +422,7 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
 - **Super tarea A: Información siempre visible** (Alta | PDF)
   - Zonas identificadas para jugador y computador, con áreas desplazables horizontalmente para mostrar sus cartas como imágenes; antes de repartir, ambas zonas están vacías.
   - Puntajes del jugador y del computador, saldo y apuesta vigente a la vista. Antes de iniciar una ronda se indica que no hay apuesta vigente.
+  - En el tamaño mínimo de ventana, todos los controles y botones se ven sin desplazamiento vertical; el desplazamiento horizontal se limita a las manos cuando sus cartas no caben en el ancho disponible. (Propuesta)
 - **Super tarea B: Mensajes de estado** (Alta | PDF)
   - Se indica el turno actual (apostar, turno del jugador, turno del computador).
   - Se informan las jugadas especiales: Blackjack, Veintiuno, Veinte y medio (solo con J/Q/K + 4 iniciales) y Pasarse.

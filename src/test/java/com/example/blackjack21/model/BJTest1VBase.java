@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BJTest1VBase {
     @Test
+    // Comprueba que el mazo tenga 52 cartas distintas.
     void V01_HU01_MazoContiene52CartasUnicas() {
         Mazo mazo = new Mazo();
         Set<Carta> cartas = new HashSet<>();
@@ -27,6 +28,7 @@ class BJTest1VBase {
     }
 
     @Test
+    // Comprueba que la mano inicial tenga dos cartas y queden 50.
     void V01_HU01_ManoInicialTieneDosCartasYQuedan50() {
         JuegoBlackjack juego = juegoSinBlackjackInicial();
 
@@ -35,6 +37,7 @@ class BJTest1VBase {
     }
 
     @Test
+    // Comprueba que el mazo y la mano usen las estructuras solicitadas.
     void V01_HU01_MazoYManoUsanLasEstructurasSolicitadas() throws NoSuchFieldException {
         assertEquals(Carta[].class, Mazo.class.getDeclaredField("cartas").getType());
         assertEquals(LinkedList.class,
@@ -42,6 +45,7 @@ class BJTest1VBase {
     }
 
     @Test
+    // Comprueba que pedir carta agregue una carta al final de la mano.
     void V01_HU02_PedirCartaAgregaUnaCartaEnOrden() {
         JuegoBlackjack juego = juegoSinBlackjackInicial();
         var manoInicial = juego.getMano();
@@ -55,6 +59,7 @@ class BJTest1VBase {
     }
 
     @Test
+    // Comprueba que el mazo no repita cartas y rechace extracciones adicionales.
     void V01_HU03_MazoAgotadoNoRepiteCartasYRechazaOtraExtraccion() {
         Mazo mazo = new Mazo();
         Set<Carta> cartas = new HashSet<>();
@@ -68,12 +73,14 @@ class BJTest1VBase {
     }
 
     @Test
+    // Comprueba el formato de texto usado para identificar una carta.
     void V01_HU04_CartaSeRepresentaConLaAbreviaturaDeValorYPalo() {
         assertEquals("4P", new Carta("4", Carta.Palo.P).toString());
         assertEquals("AsC", new Carta("As", Carta.Palo.C).toString());
         assertEquals("KD", new Carta("K", Carta.Palo.D).toString());
     }
 
+    // Prepara un juego de prueba con cartas iniciales que no forman Blackjack.
     private static JuegoBlackjack juegoSinBlackjackInicial() {
         List<Carta> ordenReparto = new ArrayList<>();
         ordenReparto.add(new Carta("2", Carta.Palo.P));

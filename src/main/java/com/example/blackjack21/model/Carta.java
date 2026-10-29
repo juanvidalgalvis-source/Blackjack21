@@ -5,6 +5,7 @@ public record Carta(String valor, Palo palo) {
         P, C, D, T
     }
 
+    // Devuelve el valor base de la carta para calcular el puntaje.
     public int getPuntajeBase() {
         return switch (valor) {
             case "As" -> 11;
@@ -13,6 +14,7 @@ public record Carta(String valor, Palo palo) {
         };
     }
 
+    // Muestra la carta usando su valor y la inicial de su palo.
     @Override
     public String toString() {
         return valor + palo;
