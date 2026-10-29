@@ -6,9 +6,9 @@ Aplicación de escritorio para jugar Blackjack contra el computador. El jugador 
 
 | Dato | Información |
 |---|---|
-| Nombre del estudiante | ______________________________ |
-| Código estudiantil | ______________________________ |
-| Docente | ______________________________ |
+| Nombre del estudiante | Juan Felipe Vidal |
+| Código estudiantil | 2439854 |
+| Docente | Paola Johana Rodriguez |
 | Versión | 5 — Completa |
 
 ## Requisitos
