@@ -299,7 +299,8 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
 - **Tarea C: Resultado único** (Alta | PDF)
   - El resultado se determina una sola vez por ronda.
 - **Tarea D: Bloqueo al terminar** (Alta | PDF)
-  - Terminada la ronda, solo queda habilitado «Iniciar ronda».
+  - Terminada la ronda, «Pedir carta» y «Plantarse» quedan deshabilitados y no se permiten más acciones de esa ronda.
+  - Si hay saldo suficiente, se puede preparar e iniciar la siguiente ronda; «Ver reglas» y «Cerrar juego» siguen disponibles según HU-18.
 
 ---
 
@@ -364,21 +365,21 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Vincular cartas con imágenes** (Alta | PDF)
   - Cada una de las 52 cartas se asocia con su imagen de la carpeta `images`, mediante un código de carta (ejemplo: 4P).
-  - Las imágenes se cargan una sola vez al abrir la aplicación.
+  - Las 52 imágenes se cargan una sola vez al abrir la aplicación y se reutilizan al actualizar las manos.
 - **Tarea B: Mostrar las manos** (Alta | PDF)
   - Las manos del jugador y del computador se muestran con imágenes, en el orden en que se recibieron.
-- **Tarea C: Imagen faltante** (Media | Propuesta)
-  - Si falta una imagen, la aplicación lo informa y muestra la carta en texto, en lugar de cerrarse.
-- **Tarea D: Ajuste visual** (Baja | Propuesta)
-  - Las imágenes mantienen un tamaño uniforme y caben en pantalla con manos largas.
+- **Tarea C: Imagen faltante** (Media | Propuesta, acordada)
+  - Si falta una imagen, la aplicación lo informa y muestra el código de la carta en texto, en lugar de cerrarse.
+- **Tarea D: Ajuste visual** (Baja | Propuesta, acordada)
+  - Las imágenes mantienen un tamaño uniforme y se presentan en una fila con desplazamiento horizontal cuando la mano no cabe en el área visible.
 
 ## HU-16. Consultar las reglas sin perder la partida
 **Como** jugador, **quiero** abrir las reglas desde un botón, **para** resolver dudas sin perder lo que llevo jugado.
 
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Botón «Ver reglas»** (Alta | PDF)
-  - Existe el botón «Ver reglas», que muestra una ventana con las reglas resumidas del juego.
-  - Las reglas explican el objetivo, los valores de las cartas, el ajuste de ases, las apuestas y sus pagos, las jugadas especiales (incluidas la prioridad de Blackjack y la combinación J/Q/K + 4 para Veinte y medio) y las reglas del computador.
+  - Existe el botón «Ver reglas», que muestra una ventana modal con un resumen de las reglas del juego; no es una copia completa del PDF.
+  - El resumen explica el objetivo, los valores de las cartas, el ajuste de ases, las apuestas y sus pagos, las jugadas especiales (incluidas la prioridad de Blackjack y la combinación J/Q/K + 4 para Veinte y medio) y las reglas del computador.
 - **Tarea B: Conservar la partida** (Alta | PDF)
   - Al cerrar las reglas, manos, saldo, apuesta y estado de la ronda siguen intactos.
 
@@ -388,11 +389,12 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Botón «Cerrar juego»** (Alta | PDF)
   - Existe el botón «Cerrar juego».
-  - Al pulsarlo se muestra una confirmación.
+  - Al pulsarlo se muestra una confirmación con «Sí, cerrar» y «Cancelar».
 - **Tarea B: Cierre con la X** (Alta | PDF)
-  - Cerrar con la X de la ventana muestra la misma confirmación.
+  - Cerrar con la X de la ventana muestra la misma confirmación que el botón.
 - **Tarea C: Cancelar** (Alta | PDF)
-  - Si se cancela, la ventana sigue abierta y el estado del juego no cambia.
+  - Si se cancela desde cualquiera de las dos confirmaciones, la ventana sigue abierta y el estado del juego no cambia.
+  - Si se confirma desde cualquiera de las dos confirmaciones, la aplicación se cierra.
 
 ## HU-18. Tener solo las acciones que corresponden
 **Como** jugador, **quiero** que los botones se habiliten solo cuando tienen sentido, **para** no cometer jugadas fuera de turno.
@@ -401,27 +403,29 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
 - **Super tarea A: Estados del juego** (Alta | PDF)
   - Antes de la primera ronda, las manos del jugador y del computador están vacías, no hay apuesta vigente y un mensaje indica que se debe ingresar una apuesta.
   - Sin ronda en curso: están disponibles «Iniciar ronda», el campo de apuesta, «Ver reglas» y «Cerrar juego»; «Pedir carta» y «Plantarse» permanecen deshabilitados.
-  - Turno del jugador: solo «Pedir carta», «Plantarse», «Ver reglas» y «Cerrar juego».
-  - Turno del computador y fin de ronda: no se puede pedir carta ni plantarse.
+  - Turno del jugador: están disponibles «Pedir carta», «Plantarse», «Ver reglas» y «Cerrar juego».
+  - Turno del computador: «Pedir carta», «Plantarse», «Iniciar ronda» y el campo de apuesta están deshabilitados; «Ver reglas» y «Cerrar juego» siguen disponibles.
+  - Fin de ronda con saldo de al menos 10 fichas: «Pedir carta» y «Plantarse» están deshabilitados; «Iniciar ronda», el campo de apuesta, «Ver reglas» y «Cerrar juego» están disponibles.
   - Fin del juego por saldo: solo «Ver reglas» y «Cerrar juego».
 - **Tarea B: Reglas críticas** (Alta | PDF)
   - No se puede pedir carta fuera del turno del jugador.
   - No se puede cambiar la apuesta después del reparto.
   - No se puede iniciar otra ronda antes de terminar la actual.
-- **Tarea C: Mazo agotado** (Media | Propuesta)
-  - Si el mazo se agota durante una ronda, no se permite pedir más cartas y la ronda continúa con las reglas ya definidas.
+- **Tarea C: Integridad del mazo** (Media | Propuesta, ajustada)
+  - En una ronda normal, los turnos terminan por las reglas de puntaje antes de poder agotar el mazo completo.
+  - El modelo mantiene la protección para no extraer una carta de un mazo vacío; no se define un flujo de juego adicional para ese caso inalcanzable en una ronda normal.
 
 ## HU-19. Entender qué está pasando en la mesa
 **Como** jugador, **quiero** mensajes claros y toda la información visible, **para** saber de quién es el turno y cómo va la ronda.
 
 **Criterios de aceptación / tareas:**
 - **Super tarea A: Información siempre visible** (Alta | PDF)
-  - Zonas identificadas para jugador y computador, con espacio para mostrar las imágenes de sus cartas; antes de repartir, ambas zonas están vacías.
-  - Puntajes de ambos, saldo y apuesta vigente a la vista.
+  - Zonas identificadas para jugador y computador, con áreas desplazables horizontalmente para mostrar sus cartas como imágenes; antes de repartir, ambas zonas están vacías.
+  - Puntajes del jugador y del computador, saldo y apuesta vigente a la vista. Antes de iniciar una ronda se indica que no hay apuesta vigente.
 - **Super tarea B: Mensajes de estado** (Alta | PDF)
   - Se indica el turno actual (apostar, turno del jugador, turno del computador).
   - Se informan las jugadas especiales: Blackjack, Veintiuno, Veinte y medio (solo con J/Q/K + 4 iniciales) y Pasarse.
-  - Se informa el resultado final de la ronda.
+  - Al terminar la ronda se informa victoria, derrota o empate, el motivo y las fichas acreditadas; si el saldo es menor a 10, también se informa el fin del juego.
 - **Tarea C: Revisión de textos** (Baja | Propuesta)
   - Los mensajes están en español, son consistentes entre sí y no muestran errores técnicos al usuario.
 
@@ -455,10 +459,10 @@ Veinte y medio no se determina solo por sumar 14: requiere que las dos cartas in
   - Con apuesta de 100, validar saldos finales de 900 en derrota, 1.000 en empate, 1.100 en victoria ordinaria y 1.150 en victoria con Blackjack; el empate con Blackjack devuelve solo la apuesta.
   - Comprobar que cada resultado liquida una sola vez, que con menos de 10 fichas no se inicia otra ronda y que con exactamente 10 sí se puede apostar.
 - **Super tarea E: Pruebas de la versión 5 — Completa** (Alta | PDF)
-  - Verificar correspondencia entre cartas e imágenes y, si se implementa el manejo opcional de imágenes faltantes, comprobar que se informa sin cerrar la aplicación.
-  - Abrir y cerrar las reglas antes de una ronda y durante una ronda; confirmar que no cambian manos, mazo, turno, apuesta, saldo ni resultado.
-  - Probar el cierre con el botón y con la X antes de una ronda, durante el turno del jugador y después del resultado; al cancelar, conservar la partida, y al confirmar, cerrar.
-  - Verificar las acciones habilitadas antes de la primera ronda, durante cada turno, al terminar la ronda y al acabarse las fichas; comprobar que no se aceptan acciones fuera de turno.
+  - Ejecutar la prueba automatizada de disponibilidad de los 52 recursos y los casos manuales V05-HU15-01 a V05-HU15-03 de `src/test/manual/V05_Pruebas_Interfaz.md`.
+  - Comprobar visualmente la correspondencia de las cartas, su orden, tamaño uniforme y desplazamiento horizontal; probar el recurso faltante en una copia de prueba, sin retirar archivos del proyecto.
+  - Ejecutar los casos manuales V05-HU16-01 a V05-HU19-03 del mismo registro para reglas, cierre, estados de controles e información visible.
+  - Registrar resultado esperado y obtenido, incluyendo los casos no ejecutables o bloqueados y la razón; no marcar como aprobada una prueba que no se haya ejecutado.
 - **Tarea F: Ejecución y registro progresivos** (Alta | PDF)
   - Preparar y ejecutar las pruebas correspondientes al completar cada versión; al avanzar, conservar y volver a ejecutar las pruebas anteriores que sigan aplicando.
   - Mantener un formato de nombres consistente (por ejemplo, `V01_HU01_MazoSinRepeticiones`) y registrar para cada caso la versión, la entrada o acción, el resultado esperado y el resultado obtenido.
